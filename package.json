@@ -17,7 +17,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-react": "^5.19.0"
+    "swagger-ui-react": "^4.19.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
