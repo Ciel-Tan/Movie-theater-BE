@@ -1,7 +1,10 @@
+import env from 'dotenv';
+env.config();
+
 module.exports = {
-    host: 'localhost',      // Your MySQL host (e.g., localhost, IP address)
-    user: 'root',     // Your MySQL username
-    password: 'ManasCiel:3', // Your MySQL password
-    database: 'movietheaterdb', // Your MySQL database name
-    port: 3306                // Default MySQL port is 3306, change if needed
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    port: process.env.DB_PORT || 3306
 };

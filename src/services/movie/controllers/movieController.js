@@ -1,5 +1,5 @@
 // services/movie/controllers/movieController.js
-import movieService from '../services/movieService'; // Import service correctly
+import movieService from '../services/movieService';
 
 const getMovies = async () => {
     try {
@@ -11,7 +11,6 @@ const getMovies = async () => {
         throw error;
     }
 };
-
 
 const getMovieById = async (movieId) => {
     try {

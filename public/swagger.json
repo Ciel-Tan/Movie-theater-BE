@@ -37,7 +37,7 @@
                         "type": "string"
                       },
                       "age_rating": {
-                        "type": "string"
+                        "type": "integer"
                       },
                       "run_time": {
                         "type": "integer"
@@ -93,11 +93,5 @@
       }
     }
   },
-  "components": {},
-  "tags": [
-    {
-      "name": "Movies",
-      "description": "Operations related to movies"
-    }
-  ]
+  "components": {}
 }
