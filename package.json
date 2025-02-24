@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "backend": "file:",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.12.0",
     "next": "15.1.7",
     "react": "^19.0.0",

@@ -1,5 +1,5 @@
 import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerDefinition from '../../../../src/docs/swagger.jsdoc.cjs';
+import swaggerDefinition from '../../../docs/swagger.jsdoc.js';
 
 const swaggerSpec = swaggerJsdoc(swaggerDefinition);
 

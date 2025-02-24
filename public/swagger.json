@@ -1,9 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Next.js Movie Booking API",
-    "version": "1.0.0",
-    "description": "API documentation for the Next.js movie booking backend with microservice architecture."
+    "title": "Movie Theater API",
+    "version": "1.0.0"
   },
   "servers": [
     {
@@ -11,11 +10,21 @@
       "description": "Development server"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token to access protected endpoints"
+      }
+    }
+  },
   "paths": {
     "/api/movies/get": {
       "get": {
         "tags": [
-          "Movies"
+          "Movies Controller"
         ],
         "responses": {
           "200": {
@@ -69,7 +78,7 @@
     "/api/movies/{movieId}": {
       "get": {
         "tags": [
-          "Movies"
+          "Movies Controller"
         ],
         "parameters": [
           {
@@ -91,7 +100,147 @@
           }
         }
       }
+    },
+    "/api/login": {
+      "post": {
+        "tags": ["Authentication Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "User's password"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful, JWT token generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "expiresIn": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/register": {
+      "post": {
+        "tags": ["Authentication Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "full_name": {
+                    "type": "string",
+                    "description": "User's full name",
+                    "example": "John Doe"
+                  },
+                  "gender": {
+                    "type": "boolean",
+                    "enum": [
+                      true,
+                      false
+                    ],
+                    "description": "User's gender",
+                    "example": true
+                  },
+                  "birthday": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "User's birthday (YYYY-MM-DD)",
+                    "example": "1990-01-15"
+                  },
+                  "id_number": {
+                    "type": "string",
+                    "description": "User's ID number",
+                    "example": "ID123456789"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "description": "User's phone number",
+                    "example": "123-456-7890"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's email address (must be unique)",
+                    "example": "john.doe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "User's password",
+                    "example": "P@$$wOrd123"
+                  }
+                },
+                "required": [
+                  "full_name",
+                  "gender",
+                  "birthday",
+                  "id_number",
+                  "phone_number",
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Account created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Account created successfully"
+                    },
+                    "account": {
+                      "type": "object",
+                      "description": "Details of the newly created account"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
-  "components": {}
+  "tags": []
 }

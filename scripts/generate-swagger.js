@@ -1,5 +1,5 @@
 const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerDefinition = require('../src/docs/swagger.jsdoc.cjs'); // Adjust path if needed
+const swaggerDefinition = require('../src/docs/swagger.jsdoc.js'); // Adjust path if needed
 const fs = require('fs');
 const path = require('path');
 
