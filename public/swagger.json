@@ -75,7 +75,7 @@
         }
       }
     },
-    "/api/movies/{movieId}": {
+    "/api/movies/{movie_id}": {
       "get": {
         "tags": [
           "Movies Controller"
@@ -83,9 +83,8 @@
         "parameters": [
           {
             "in": "path",
-            "name": "movieId",
+            "name": "movie_id",
             "required": true,
-            "description": "ID of the movie to get",
             "schema": {
               "type": "integer"
             }
@@ -94,14 +93,11 @@
         "responses": {
           "200": {
             "description": "Movie details"
-          },
-          "404": {
-            "description": "Movie not found"
           }
         }
       }
     },
-    "/api/login": {
+    "/api/auth/login": {
       "post": {
         "tags": ["Authentication Controller"],
         "requestBody": {
@@ -152,7 +148,7 @@
         }
       }
     },
-    "/api/register": {
+    "/api/auth/register": {
       "post": {
         "tags": ["Authentication Controller"],
         "requestBody": {
@@ -233,6 +229,265 @@
                       "type": "object",
                       "description": "Details of the newly created account"
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts/getAll": {
+      "get": {
+        "tags": ["Account Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": { "type": "integer" },
+                      "full_name": { "type": "string" },
+                      "email": { "type": "string", "format": "email" },
+                      "gender": { "type": "boolean", "enum": [true, false] },
+                      "birthday": { "type": "string", "format": "date" },
+                      "id_number": { "type": "string" },
+                      "phone_number": { "type": "string" },
+                      "role": {
+                        "type": "object",
+                        "properties": {
+                          "role_id": { "type": "integer" },
+                          "role_name": { "type": "string" }
+                        }
+                      },
+                      "membership_type": {
+                        "type": "object",
+                        "properties": {
+                          "membership_id": { "type": "integer" },
+                          "membership_name": { "type": "string" },
+                          "discount_rate": { "type": "number", "format": "float" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts/{account_id}": {
+      "get": {
+        "tags": ["Account Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "description": "Account details when a specific account ID is provided (number).",
+                      "properties": {
+                        "account_id": { "type": "integer" },
+                        "full_name": { "type": "string" },
+                        "email": { "type": "string", "format": "email" },
+                        "gender": { "type": "boolean", "enum": [true, false] },
+                        "birthday": { "type": "string", "format": "date" },
+                        "id_number": { "type": "string" },
+                        "phone_number": { "type": "string" },
+                        "role": {
+                          "type": "object",
+                          "properties": {
+                            "role_id": { "type": "integer" },
+                            "role_name": { "type": "string" }
+                          }
+                        },
+                        "membership_type": {
+                          "type": "object",
+                          "properties": {
+                            "membership_id": { "type": "integer" },
+                            "membership_name": { "type": "string" },
+                            "discount_rate": { "type": "number", "format": "float" }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "account_id": { "type": "integer" },
+                          "full_name": { "type": "string" },
+                          "email": { "type": "string", "format": "email" },
+                          "gender": { "type": "boolean", "enum": [true, false] },
+                          "birthday": { "type": "string", "format": "date" },
+                          "id_number": { "type": "string" },
+                          "phone_number": { "type": "string" },
+                          "role": {
+                            "type": "object",
+                            "properties": {
+                              "role_id": { "type": "integer" },
+                              "role_name": { "type": "string" }
+                            }
+                          },
+                          "membership_type": {
+                            "type": "object",
+                            "properties": {
+                              "membership_id": { "type": "integer" },
+                              "membership_name": { "type": "string" },
+                              "discount_rate": { "type": "number", "format": "float" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Account Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "role_id": {
+                    "type": "integer",
+                    "description": "Role ID to update for the account"
+                  },
+                  "membership_id": {
+                    "type": "integer",
+                    "description": "Membership ID to update for the account"
+                  },
+                  "full_name": {
+                    "type": "string",
+                    "description": "Full name to update"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [true, false],
+                    "description": "Gender to update"
+                  },
+                  "birthday": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Birthday to update (YYYY-MM-DD)"
+                  },
+                  "id_number": {
+                    "type": "string",
+                    "description": "ID number to update"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "description": "Phone number to update"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email to update"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password to update"
+                  }
+                },
+                "example": {
+                  "full_name": "Updated Name",
+                  "email": "updated@example.com",
+                  "phone_number": "987-654-3210"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account_id": { "type": "integer" },
+                    "full_name": { "type": "string" },
+                    "email": { "type": "string", "format": "email" },
+                    "gender": { "type": "boolean", "enum": [true, false] },
+                    "birthday": { "type": "string", "format": "date" },
+                    "id_number": { "type": "string" },
+                    "phone_number": { "type": "string" },
+                    "role": {
+                      "type": "object",
+                      "properties": {
+                        "role_id": { "type": "integer" },
+                        "role_name": { "type": "string" }
+                      }
+                    },
+                    "membership_type": {
+                      "type": "object",
+                      "properties": {
+                        "membership_id": { "type": "integer" },
+                        "membership_name": { "type": "string" },
+                        "discount_rate": { "type": "number", "format": "float" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Account Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Account deleted successfully" }
                   }
                 }
               }
