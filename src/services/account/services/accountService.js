@@ -1,6 +1,8 @@
 import db from '../../../../db';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
+import { sendEmail } from '@/src/lib/emailService';
+import crypto from 'crypto';
 
 export const accountService = {
     async login({ email, password }) {
@@ -157,5 +159,91 @@ export const accountService = {
             console.error("Error deleting account:", error);
             throw error;
         }
-    }
+    },
+
+    async changePassword(account_id, currentPassword, newPassword) {
+        try {
+            const user = await this.getAccountById(account_id)
+
+            const passwordMatch = bcrypt.compare(currentPassword, user.password)
+            if (!passwordMatch) {
+                return { message: 'Incorrect password' };
+            }
+
+            const hashPassword = await bcrypt.hash(newPassword, 10)
+            await db.query(
+                `UPDATE account
+                 SET password = ?
+                 WHERE account_id = ?`,
+                [hashPassword, account_id]
+            )
+
+            return true
+        }
+        catch (error) {
+            console.error("Error changing password:", error);
+            throw error;
+        }
+    },
+
+    async forgotPassword(email) {
+        try {
+            // 1. Check if an account with this email exists
+            const accounts = await db.query(
+                'SELECT account_id, full_name, email FROM account WHERE email = ?',
+                [email]
+            );
+            
+            const account = accounts[0];
+
+            if (!account) {
+                // Security best practice: Do NOT reveal if email doesn't exist.
+                // Just return success indicating email was "sent" (generic success response)
+                console.log(`Password reset requested for non-existent email: ${email}. (This is intentionally ignored for security).`);
+                return true; // Still return success for security
+            }
+
+            const account_id = account.account_id;
+            const full_name = account.full_name;
+
+            const newPasswordPlain = crypto.randomBytes(12).toString('base64');
+            const newPasswordHash = await bcrypt.hash(newPasswordPlain, 10);
+
+            await db.query(
+                'UPDATE account SET password = ? WHERE account_id = ?',
+                [newPasswordHash, account_id]
+            );
+
+            const emailBody = `
+                Hello ${full_name},
+
+                Your password has been reset. Your new temporary password is:
+
+                **${newPasswordPlain}**
+
+                Please log in using this password and immediately change it to a new, strong password.
+
+                If you did not request a password reset, please ignore this email and contact support.
+
+                Sincerely,
+                Your Movie Theater Team
+            `;
+
+            const emailSent = await sendEmail({
+                to: email,
+                subject: "Your Password Has Been Reset",
+                html: emailBody
+            })
+
+            if (!emailSent) {
+                console.error(`Failed to send password reset email to ${email}. (This is intentionally ignored for security).`);
+            }
+
+            return true; // Indicate that the forgot password process was initiated (email sent or would be sent)
+
+        } catch (error) {
+            console.error("Error in accountService.forgotPassword:", error);
+            throw error;
+        }
+    },
 }

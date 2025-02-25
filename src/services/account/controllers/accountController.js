@@ -65,6 +65,28 @@ const accountController = {
             throw error
         }
     },
+
+    async changePassword (account_id, currentPassword, newPassword) {
+        try {
+            const changedPassword = await accountService.changePassword(account_id, currentPassword, newPassword)
+            return changedPassword
+        }
+        catch (error) {
+            console.error("Error in accountService.changePassword:", error)
+            throw error
+        }
+    },
+
+    async forgotPassword (email) {
+        try {
+            await accountService.forgotPassword(email)
+            return true
+        }
+        catch (error) {
+            console.error("Error in accountService.forgotPassword:", error)
+            throw error
+        }
+    }
 };
 
 export default accountController

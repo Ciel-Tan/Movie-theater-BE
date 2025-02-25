@@ -240,6 +240,11 @@
     "/api/accounts/getAll": {
       "get": {
         "tags": ["Account Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -490,6 +495,75 @@
                     "message": { "type": "string", "example": "Account deleted successfully" }
                   }
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts/change-password/{account_id}": {
+      "post": {
+        "tags": ["Account Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "description": "User's current password"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "description": "User's new password"
+                  }
+                },
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts/forgot-password": {
+      "post": {
+        "tags": ["Account Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's registered email address"
+                  }
+                },
+                "required": [
+                  "email"
+                ]
               }
             }
           }
