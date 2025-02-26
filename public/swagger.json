@@ -18,55 +18,283 @@
         "bearerFormat": "JWT",
         "description": "JWT Bearer token to access protected endpoints"
       }
+    },
+    "schemas": {
+      "Director": {
+        "type": "object",
+        "properties": {
+          "director_id": {
+            "type": "integer"
+          },
+          "director_name": {
+            "type": "string"
+          }
+        }
+      },
+      "Actor": {
+        "type": "object",
+        "properties": {
+          "actor_id": {
+            "type": "integer"
+          },
+          "actor_name": {
+            "type": "string"
+          }
+        }
+      },
+      "MovieDetail": {
+        "type": "object",
+        "properties": {
+          "movie_id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "poster_image": {
+            "type": "string",
+            "nullable": true
+          },
+          "poster_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "age_rating": {
+            "type": "integer",
+            "nullable": true
+          },
+          "run_time": {
+            "type": "integer",
+            "nullable": true
+          },
+          "release_date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "trailer_link": {
+            "type": "string",
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "director": {
+            "$ref": "#/components/schemas/Director"
+          },
+          "actors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Actor"
+            }
+          }
+        }
+      },
+      "MovieUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "poster_image": {
+            "type": "string",
+            "nullable": true
+          },
+          "poster_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "age_rating": {
+            "type": "integer",
+            "nullable": true
+          },
+          "run_time": {
+            "type": "integer",
+            "nullable": true
+          },
+          "release_date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "trailer_link": {
+            "type": "string",
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "director_id": {
+            "type": "integer",
+            "nullable": true
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "example": 3600
+          }
+        }
+      },
+      "Register": {
+        "type": "object",
+        "properties": {
+          "full_name": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "boolean",
+            "enum": [true, false],
+            "example": true
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date",
+            "example": "1990-01-15"
+          },
+          "id_number": {
+            "type": "string"
+          },
+          "phone_number": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Account created successfully"
+          },
+          "account": {
+            "type": "object",
+            "description": "Details of the newly created account"
+          }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "role_id": { "type": "integer" },
+          "role_name": { "type": "string" }
+        }
+      },
+      "Membership": {
+        "type": "object",
+        "properties": {
+          "membership_id": { "type": "integer" },
+          "membership_name": { "type": "string" },
+          "discount_rate": { "type": "number", "format": "float" }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "properties": {
+          "account_id": { "type": "integer" },
+          "full_name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "gender": { "type": "boolean", "enum": [true, false] },
+          "birthday": { "type": "string", "format": "date" },
+          "id_number": { "type": "string" },
+          "phone_number": { "type": "string" },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "membership_type": {
+            "$ref": "#/components/schemas/Membership"
+          }
+        }
+      },
+      "AccountUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "membership_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "full_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "boolean",
+            "enum": [true, false],
+            "nullable": true
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "id_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          }
+        }
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "currentPassword": { "type": "string" },
+          "newPassword": { "type": "string" }
+        }
+      }
     }
   },
   "paths": {
-    "/api/movies/get": {
+    "/api/movies/getAll": {
       "get": {
-        "tags": [
-          "Movies Controller"
-        ],
+        "tags": ["Movies Controller"],
         "responses": {
           "200": {
-            "description": "List of movies",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "movie_id": {
-                        "type": "integer"
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "age_rating": {
-                        "type": "integer"
-                      },
-                      "run_time": {
-                        "type": "integer"
-                      },
-                      "release_date": {
-                        "type": "string"
-                      },
-                      "trailer_link": {
-                        "type": "string"
-                      },
-                      "language": {
-                        "type": "string"
-                      },
-                      "background_poster_image": {
-                        "type": "string"
-                      },
-                      "small_poster_image": {
-                        "type": "string"
-                      }
-                    }
+                    "$ref": "#/components/schemas/MovieDetail"
                   }
                 }
               }
@@ -77,9 +305,7 @@
     },
     "/api/movies/{movie_id}": {
       "get": {
-        "tags": [
-          "Movies Controller"
-        ],
+        "tags": ["Movies Controller"],
         "parameters": [
           {
             "in": "path",
@@ -90,9 +316,82 @@
             }
           }
         ],
+         "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MovieDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Movies Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "movie_id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovieUpdateRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Movie details"
+            "description": "Movie updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MovieDetail"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Movies Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "movie_id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Movie deleted"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -105,42 +404,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "User's email address"
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "User's password"
-                  }
-                },
-                "required": [
-                  "email",
-                  "password"
-                ]
+                "$ref": "#/components/schemas/Login"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Login successful, JWT token generated",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "token": {
-                      "type": "string"
-                    },
-                    "expiresIn": {
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  }
+                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             }
@@ -156,80 +430,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "full_name": {
-                    "type": "string",
-                    "description": "User's full name",
-                    "example": "John Doe"
-                  },
-                  "gender": {
-                    "type": "boolean",
-                    "enum": [
-                      true,
-                      false
-                    ],
-                    "description": "User's gender",
-                    "example": true
-                  },
-                  "birthday": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "User's birthday (YYYY-MM-DD)",
-                    "example": "1990-01-15"
-                  },
-                  "id_number": {
-                    "type": "string",
-                    "description": "User's ID number",
-                    "example": "ID123456789"
-                  },
-                  "phone_number": {
-                    "type": "string",
-                    "description": "User's phone number",
-                    "example": "123-456-7890"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "User's email address (must be unique)",
-                    "example": "john.doe@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "User's password",
-                    "example": "P@$$wOrd123"
-                  }
-                },
-                "required": [
-                  "full_name",
-                  "gender",
-                  "birthday",
-                  "id_number",
-                  "phone_number",
-                  "email",
-                  "password"
-                ]
+                "$ref": "#/components/schemas/Register"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Account created successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Account created successfully"
-                    },
-                    "account": {
-                      "type": "object",
-                      "description": "Details of the newly created account"
-                    }
-                  }
+                  "$ref": "#/components/schemas/RegisterResponse"
                 }
               }
             }
@@ -252,31 +463,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "account_id": { "type": "integer" },
-                      "full_name": { "type": "string" },
-                      "email": { "type": "string", "format": "email" },
-                      "gender": { "type": "boolean", "enum": [true, false] },
-                      "birthday": { "type": "string", "format": "date" },
-                      "id_number": { "type": "string" },
-                      "phone_number": { "type": "string" },
-                      "role": {
-                        "type": "object",
-                        "properties": {
-                          "role_id": { "type": "integer" },
-                          "role_name": { "type": "string" }
-                        }
-                      },
-                      "membership_type": {
-                        "type": "object",
-                        "properties": {
-                          "membership_id": { "type": "integer" },
-                          "membership_name": { "type": "string" },
-                          "discount_rate": { "type": "number", "format": "float" }
-                        }
-                      }
-                    }
+                    "$ref": "#/components/schemas/Account"
                   }
                 }
               }
@@ -303,66 +490,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "description": "Account details when a specific account ID is provided (number).",
-                      "properties": {
-                        "account_id": { "type": "integer" },
-                        "full_name": { "type": "string" },
-                        "email": { "type": "string", "format": "email" },
-                        "gender": { "type": "boolean", "enum": [true, false] },
-                        "birthday": { "type": "string", "format": "date" },
-                        "id_number": { "type": "string" },
-                        "phone_number": { "type": "string" },
-                        "role": {
-                          "type": "object",
-                          "properties": {
-                            "role_id": { "type": "integer" },
-                            "role_name": { "type": "string" }
-                          }
-                        },
-                        "membership_type": {
-                          "type": "object",
-                          "properties": {
-                            "membership_id": { "type": "integer" },
-                            "membership_name": { "type": "string" },
-                            "discount_rate": { "type": "number", "format": "float" }
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "account_id": { "type": "integer" },
-                          "full_name": { "type": "string" },
-                          "email": { "type": "string", "format": "email" },
-                          "gender": { "type": "boolean", "enum": [true, false] },
-                          "birthday": { "type": "string", "format": "date" },
-                          "id_number": { "type": "string" },
-                          "phone_number": { "type": "string" },
-                          "role": {
-                            "type": "object",
-                            "properties": {
-                              "role_id": { "type": "integer" },
-                              "role_name": { "type": "string" }
-                            }
-                          },
-                          "membership_type": {
-                            "type": "object",
-                            "properties": {
-                              "membership_id": { "type": "integer" },
-                              "membership_name": { "type": "string" },
-                              "discount_rate": { "type": "number", "format": "float" }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Account"
                 }
               }
             }
@@ -386,53 +514,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "role_id": {
-                    "type": "integer",
-                    "description": "Role ID to update for the account"
-                  },
-                  "membership_id": {
-                    "type": "integer",
-                    "description": "Membership ID to update for the account"
-                  },
-                  "full_name": {
-                    "type": "string",
-                    "description": "Full name to update"
-                  },
-                  "gender": {
-                    "type": "string",
-                    "enum": [true, false],
-                    "description": "Gender to update"
-                  },
-                  "birthday": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Birthday to update (YYYY-MM-DD)"
-                  },
-                  "id_number": {
-                    "type": "string",
-                    "description": "ID number to update"
-                  },
-                  "phone_number": {
-                    "type": "string",
-                    "description": "Phone number to update"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "Email to update"
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "Password to update"
-                  }
-                },
-                "example": {
-                  "full_name": "Updated Name",
-                  "email": "updated@example.com",
-                  "phone_number": "987-654-3210"
-                }
+                "$ref": "#/components/schemas/AccountUpdateRequest"
               }
             }
           }
@@ -442,31 +524,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "account_id": { "type": "integer" },
-                    "full_name": { "type": "string" },
-                    "email": { "type": "string", "format": "email" },
-                    "gender": { "type": "boolean", "enum": [true, false] },
-                    "birthday": { "type": "string", "format": "date" },
-                    "id_number": { "type": "string" },
-                    "phone_number": { "type": "string" },
-                    "role": {
-                      "type": "object",
-                      "properties": {
-                        "role_id": { "type": "integer" },
-                        "role_name": { "type": "string" }
-                      }
-                    },
-                    "membership_type": {
-                      "type": "object",
-                      "properties": {
-                        "membership_id": { "type": "integer" },
-                        "membership_name": { "type": "string" },
-                        "discount_rate": { "type": "number", "format": "float" }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/Account"
                 }
               }
             }
@@ -524,21 +582,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "currentPassword": {
-                    "type": "string",
-                    "description": "User's current password"
-                  },
-                  "newPassword": {
-                    "type": "string",
-                    "description": "User's new password"
-                  }
-                },
-                "required": [
-                  "currentPassword",
-                  "newPassword"
-                ]
+                "$ref": "#/components/schemas/ChangePassword"
               }
             }
           }
@@ -557,13 +601,227 @@
                 "properties": {
                   "email": {
                     "type": "string",
-                    "format": "email",
-                    "description": "User's registered email address"
+                    "format": "email"
                   }
-                },
-                "required": [
-                  "email"
-                ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/directors/getAll": {
+      "get": {
+        "tags": ["Director Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Director"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/directors/{director_id}": {
+      "get": {
+        "tags": ["Director Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "director_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Director"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Director Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "director_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "director_name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Director"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Director Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "director_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Director deleted successfully" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/actors/getAll": {
+      "get": {
+        "tags": ["Actor Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Actor"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/actors/{actor_id}": {
+      "get": {
+        "tags": ["Actor Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actor_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Actor"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Actor Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actor_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "actor_name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Actor"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Actor Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "actor_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Actor deleted successfully" }
+                  }
+                }
               }
             }
           }
