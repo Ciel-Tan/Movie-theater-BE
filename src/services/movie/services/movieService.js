@@ -10,18 +10,48 @@ export const movieService = {
                     m.age_rating, m.run_time, m.release_date, m.trailer_link, m.language,
                     d.director_id,
                     d.director_name,
-                    JSON_ARRAYAGG(
-                        JSON_OBJECT(
-                            'actor_id', a.actor_id,
-                            'actor_name', a.actor_name
-                        )
-                    ) AS actors
+                    
+                    (SELECT JSON_ARRAYAGG(genre_json)
+                    FROM (
+                        SELECT DISTINCT JSON_OBJECT(
+                            'genre_id', g_sub.genre_id,
+                            'genre_name', g_sub.genre_name
+                        ) AS genre_json
+                        FROM movie_genre mg_sub
+                        JOIN genre g_sub ON mg_sub.genre_id = g_sub.genre_id
+                        WHERE mg_sub.movie_id = m.movie_id
+                    ) AS distinct_genres
+                    ) AS genres,
+
+                    (SELECT JSON_ARRAYAGG(actor_json)
+                    FROM (
+                        SELECT DISTINCT JSON_OBJECT(
+                            'actor_id', a_sub.actor_id,
+                            'actor_name', a_sub.actor_name
+                        ) AS actor_json
+                        FROM movie_actor ma_sub
+                        JOIN actor a_sub ON ma_sub.actor_id = a_sub.actor_id
+                        WHERE ma_sub.movie_id = m.movie_id
+                    ) AS distinct_actors
+                    ) AS actors,
+
+                    (SELECT JSON_ARRAYAGG(showtime_json)
+                    FROM (
+                        SELECT DISTINCT JSON_OBJECT(
+                            'showtime_id', st_sub.showtime_id,
+                            'show_datetime', st_sub.show_datetime,
+                            'room_id', st_sub.room_id
+                        ) AS showtime_json
+                        FROM showtime st_sub
+                        WHERE st_sub.movie_id = m.movie_id
+                    ) AS distinct_showtime
+                    ) AS showtime
+
                 FROM movie m
                 LEFT JOIN director d ON m.director_id = d.director_id
-                LEFT JOIN movie_actor ma ON m.movie_id = ma.movie_id
-                LEFT JOIN actor a ON ma.actor_id = a.actor_id
                 GROUP BY m.movie_id, d.director_id, d.director_name`,
             );
+
             return movies.map(movie => ({
                 movie_id: movie.movie_id,
                 title: movie.title,
@@ -33,11 +63,13 @@ export const movieService = {
                 release_date: movie.release_date,
                 trailer_link: movie.trailer_link,
                 language: movie.language,
+                genres: movie.genres,
                 director: {
                     director_id: movie.director_id,
                     director_name: movie.director_name
                 },
-                actors: movie.actors
+                actors: movie.actors,
+                showtime: movie.showtime
             }));
         }
         catch (error) {
@@ -54,18 +86,47 @@ export const movieService = {
                     m.age_rating, m.run_time, m.release_date, m.trailer_link, m.language,
                     d.director_id,
                     d.director_name,
-                    JSON_ARRAYAGG(
-                        JSON_OBJECT(
-                            'actor_id', a.actor_id,
-                            'actor_name', a.actor_name
-                        )
-                    ) AS actors
+
+                    (SELECT JSON_ARRAYAGG(genre_json)
+                    FROM (
+                        SELECT DISTINCT JSON_OBJECT(
+                            'genre_id', g_sub.genre_id,
+                            'genre_name', g_sub.genre_name
+                        ) AS genre_json
+                        FROM movie_genre mg_sub
+                        JOIN genre g_sub ON mg_sub.genre_id = g_sub.genre_id
+                        WHERE mg_sub.movie_id = m.movie_id
+                    ) AS distinct_genres
+                    ) AS genres,
+
+                    (SELECT JSON_ARRAYAGG(actor_json)
+                    FROM (
+                        SELECT DISTINCT JSON_OBJECT(
+                            'actor_id', a_sub.actor_id,
+                            'actor_name', a_sub.actor_name
+                        ) AS actor_json
+                        FROM movie_actor ma_sub
+                        JOIN actor a_sub ON ma_sub.actor_id = a_sub.actor_id
+                        WHERE ma_sub.movie_id = m.movie_id
+                    ) AS distinct_actors
+                    ) AS actors,
+
+                    (SELECT JSON_ARRAYAGG(showtime_json)
+                    FROM (
+                        SELECT DISTINCT JSON_OBJECT(
+                            'showtime_id', st_sub.showtime_id,
+                            'show_datetime', st_sub.show_datetime,
+                            'room_id', st_sub.room_id
+                        ) AS showtime_json
+                        FROM showtime st_sub
+                        WHERE st_sub.movie_id = m.movie_id
+                    ) AS distinct_showtime
+                    ) AS showtime
+
                 FROM movie m
                 LEFT JOIN director d ON m.director_id = d.director_id
-                LEFT JOIN movie_actor ma ON m.movie_id = ma.movie_id
-                LEFT JOIN actor a ON ma.actor_id = a.actor_id
                 WHERE m.movie_id = ?
-                GROUP BY m.movie_id, d.director_id, d.director_name`, 
+                GROUP BY m.movie_id, d.director_id, d.director_name`,
                 [movie_id]
             );
 
@@ -82,11 +143,13 @@ export const movieService = {
                 release_date: movie.release_date,
                 trailer_link: movie.trailer_link,
                 language: movie.language,
+                genres: movie.genres,
                 director: {
                     director_id: movie.director_id,
                     director_name: movie.director_name
                 },
-                actors: movie.actors
+                actors: movie.actors,
+                showtime: movie.showtime
             }
         }
         catch (error) {
@@ -97,7 +160,7 @@ export const movieService = {
 
     async createMovie(movieData) {
         try {
-            const { actor_ids, ...rest } = movieData;
+            const { genre_ids, actor_ids, ...rest } = movieData;
             const {
                 poster_image, title, description, age_rating,
                 run_time,
@@ -117,6 +180,15 @@ export const movieService = {
             );
 
             const movie_id = addMovie.insertId;
+
+            if (genre_ids && Array.isArray(genre_ids) && genre_ids.length > 0) {
+                for (const genre_id in genre_ids) {
+                    await db.query(
+                        'INSERT INTO movie_genre SET movie_id = ?, genre_id = ?', 
+                        [movie_id, genre_id]
+                    );
+                }
+            }
 
             if (actor_ids && Array.isArray(actor_ids) && actor_ids.length > 0) {
                 for (const actor_id in actor_ids) {

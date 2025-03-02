@@ -1,6 +1,5 @@
 import { actorService } from "../services/actorService";
 
-
 const actorController = {
     async getAllActors () {
         try {

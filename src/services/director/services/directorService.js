@@ -60,6 +60,7 @@ export const directorService = {
     async deleteDirector(director_id) {
         try {
             await db.query(`DELETE FROM director WHERE director_id = ?`, [director_id])
+            await db.query('UPDATE movie SET director_id = NULL WHERE director_id = ?', [director_id])
             return { message: "Delete director successfully" }
         }
         catch (error) {

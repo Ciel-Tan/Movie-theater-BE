@@ -20,6 +20,17 @@
       }
     },
     "schemas": {
+      "Genre": {
+        "type": "object",
+        "properties": {
+          "genre_id": {
+            "type": "integer"
+          },
+          "genre_name": {
+            "type": "string"
+          }
+        }
+      },
       "Director": {
         "type": "object",
         "properties": {
@@ -39,6 +50,25 @@
           },
           "actor_name": {
             "type": "string"
+          }
+        }
+      },
+      "Showtime": {
+        "type": "object",
+        "properties": {
+          "showtime_id": {
+            "type": "integer"
+          },
+          "movie_id": {
+            "type": "integer"
+          },
+          "room_id": {
+            "type": "integer"
+          },
+          "show_datetime": {
+            "type": "string",
+            "format": "date",
+            "example": "2023-01-01T00:00:00.000Z"
           }
         }
       },
@@ -73,7 +103,7 @@
           },
           "release_date": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "nullable": true
           },
           "trailer_link": {
@@ -84,6 +114,12 @@
             "type": "string",
             "nullable": true
           },
+          "genres": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Genre"
+            }
+          },
           "director": {
             "$ref": "#/components/schemas/Director"
           },
@@ -91,6 +127,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Actor"
+            }
+          },
+          "showtime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Showtime"
             }
           }
         }
@@ -280,13 +322,24 @@
           "currentPassword": { "type": "string" },
           "newPassword": { "type": "string" }
         }
+      },
+      "Room": {
+        "type": "object",
+        "properties": {
+          "room_id": {
+            "type": "integer"
+          },
+          "room_name": {
+            "type": "string"
+          }
+        }
       }
     }
   },
   "paths": {
     "/api/movies/getAll": {
       "get": {
-        "tags": ["Movies Controller"],
+        "tags": ["Movie Controller"],
         "responses": {
           "200": {
             "content": {
@@ -305,7 +358,7 @@
     },
     "/api/movies/{movie_id}": {
       "get": {
-        "tags": ["Movies Controller"],
+        "tags": ["Movie Controller"],
         "parameters": [
           {
             "in": "path",
@@ -329,7 +382,7 @@
         }
       },
       "put": {
-        "tags": ["Movies Controller"],
+        "tags": ["Movie Controller"],
         "parameters": [
           {
             "in": "path",
@@ -365,7 +418,7 @@
         }
       },
       "delete": {
-        "tags": ["Movies Controller"],
+        "tags": ["Movie Controller"],
         "parameters": [
           {
             "in": "path",
@@ -389,6 +442,32 @@
                       "example": "Movie deleted"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/movies/create": {
+      "post": {
+        "tags": ["Movie Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovieDetail"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MovieDetail"
                 }
               }
             }
@@ -719,9 +798,38 @@
         }
       }
     },
+    "/api/directors/create": {
+      "post": {
+        "tags": ["Director Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "director_name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Director"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/actors/getAll": {
       "get": {
-        "tags": ["Actor Controller"],
+        "tags": ["Genre Controller"],
         "responses": {
           "200": {
             "content": {
@@ -821,6 +929,337 @@
                   "properties": {
                     "message": { "type": "string", "example": "Actor deleted successfully" }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/actors/create": {
+      "post": {
+        "tags": ["Actor Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "actor_name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Actor"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rooms/getAll": {
+      "get": {
+        "tags": ["Room Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rooms/{room_id}": {
+      "get": {
+        "tags": ["Room Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Room Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "room_name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Room Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Room deleted successfully" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rooms/create": {
+      "post": {
+        "tags": ["Room Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "room_name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/showtimes/create": {
+      "post": {
+        "tags": ["Showtime Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Showtime"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Showtime"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/genres/getAll": {
+      "get": {
+        "tags": ["Genre Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Genre"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/genres/{genre_id}": {
+      "get": {
+        "tags": ["Genre Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genre_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Genre"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Genre Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genre_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "genre_name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Genre"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Genre Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genre_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Genre deleted successfully" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/genres/create": {
+      "post": {
+        "tags": ["Genre Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "genre_name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Genre"
                 }
               }
             }
