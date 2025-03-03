@@ -67,7 +67,11 @@ export async function DELETE(request, { params }) {
 
         const deletedMovie = await services.movieService.movieController.default.deleteMovie(movie_id)
 
-        return NextResponse.json(deletedMovie, { status: 200 })
+        if (!deletedMovie) {
+            return NextResponse.json({ message: 'Movie not found' }, { status: 404 });
+        }
+
+        return NextResponse.json({ message: 'Movie deleted successfully' }, { status: 200 })
 
     }
     catch (error) {

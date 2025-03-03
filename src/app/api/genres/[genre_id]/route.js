@@ -67,7 +67,11 @@ export async function DELETE(request, {params}) {
 
         const deletedGenre = await services.genreService.genreController.default.deleteGenre(genre_id);
 
-        return NextResponse.json(deletedGenre, { status: 200 })
+        if (!deletedGenre) {
+            return NextResponse.json({ message: "Genre not found" }, { status: 404 })
+        }
+
+        return NextResponse.json({ message: "Genre deleted successfully" }, { status: 200 })
     }
     catch (error) {
         console.error("Error deleting genre:", error);

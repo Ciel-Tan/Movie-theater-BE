@@ -52,7 +52,6 @@ export const roomService = {
     async deleteRoom(room_id) {
         try {
             await db.query(`DELETE FROM room WHERE room_id = ?`, [room_id])
-            return { message: "Delete room successfully" }
         }
         catch (error) {
             console.error("Error deleting room from database:", error)

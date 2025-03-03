@@ -47,8 +47,7 @@ const showtimeController = {
 
     async deleteShowtime(showtime_id) {
         try {
-            const res = await showtimeService.deleteShowtime(showtime_id)
-            return res
+            await showtimeService.deleteShowtime(showtime_id)
         }
         catch (error) {
             console.error('Error deleting showtime in showtimeService.deleteShowtime:', error)

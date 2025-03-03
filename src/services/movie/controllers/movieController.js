@@ -37,8 +37,7 @@ const movieController = {
 
     async updateMovie(movie_id, movieData) {
         try {
-            const movie = await movieService.updateMovie(movie_id, movieData);
-            return movie;
+            await movieService.updateMovie(movie_id, movieData);
         }
         catch (error) {
             console.error("Error updating movie:", error);

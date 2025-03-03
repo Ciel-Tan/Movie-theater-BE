@@ -51,3 +51,30 @@ export async function PUT(request, { params }) {
         return NextResponse.json({ message: "Updating info director failed:", error: error.message }, { status: 500 })
     }
 }
+
+export async function DELETE(request, {params}) {
+    try {
+        const awaitedParams = await Promise.resolve(params);
+        const director_id = parseInt(awaitedParams.director_id, 10);
+
+        if(isNaN(director_id)) {
+            return NextResponse.json({ message: "Invalid director id" }, { status: 400 })
+        }
+
+        if(!director_id) {
+            return NextResponse.json({ message: "Director id is required" }, { status: 400 })
+        }
+
+        const deletedDirector = await services.directorService.directorController.default.deleteDirector(director_id);
+
+        if (!deletedDirector) {
+            return NextResponse.json({ message: "Director not found" }, { status: 404 })
+        }
+
+        return NextResponse.json({ message: "Director deleted successfully" }, { status: 200 })
+    }
+    catch (error) {
+        console.error("Error deleting director:", error);
+        return NextResponse.json({ message: "Deleting director failed:", error: error.message }, { status: 500 })   
+    }
+}

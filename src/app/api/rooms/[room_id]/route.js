@@ -67,7 +67,11 @@ export async function DELETE(request, {params}) {
 
         const deletedRoom = await services.roomService.roomController.default.deleteRoom(room_id);
 
-        return NextResponse.json(deletedRoom, { status: 200 })
+        if (!deletedRoom) {
+            return NextResponse.json({ message: "Room not found" }, { status: 404 })
+        }
+
+        return NextResponse.json({ message: "Room deleted successfully" }, { status: 200 })
     }
     catch (error) {
         console.error("Error deleting room:", error);

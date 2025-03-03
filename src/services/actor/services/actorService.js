@@ -61,7 +61,6 @@ export const actorService = {
         try {
             await db.query(`DELETE FROM actor WHERE actor_id = ?`, [actor_id])
             await db.query(`DELETE FROM movie_actor WHERE actor_id = ?`, [actor_id])
-            return { message: "Delete actor successfully" }
         }
         catch (error) {
             console.error("Error deleting actor from database:", error)

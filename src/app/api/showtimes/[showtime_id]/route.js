@@ -67,7 +67,11 @@ export async function DELETE(request, {params}) {
 
         const deletedShowtime = await services.showtimeService.showtimeController.default.deleteShowtime(showtime_id);
 
-        return NextResponse.json(deletedShowtime, { status: 200 })
+        if (!deletedShowtime) {
+            return NextResponse.json({ message: "Showtime not found" }, { status: 404 })
+        }
+
+        return NextResponse.json({ message: "Showtime deleted successfully" }, { status: 200 })
     }
     catch (error) {
         console.error("Error deleting showtime:", error);

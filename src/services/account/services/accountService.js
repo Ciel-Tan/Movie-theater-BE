@@ -147,13 +147,7 @@ export const accountService = {
 
     async deleteAccount(account_id) {
         try {
-            const result = await db.query(
-                `DELETE FROM account
-                 WHERE account_id = ?`,
-                [account_id]
-            )
-
-            return result.affectedRows > 0
+            await db.query(`DELETE FROM account WHERE account_id = ?`, [account_id])
         }
         catch (error) {
             console.error("Error deleting account:", error);

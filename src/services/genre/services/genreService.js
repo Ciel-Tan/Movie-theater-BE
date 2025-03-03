@@ -61,7 +61,6 @@ export const genreService = {
         try {
             await db.query(`DELETE FROM genre WHERE genre_id = ?`, [genre_id])
             await db.query(`DELETE FROM movie_genre WHERE genre_id = ?`, [genre_id])
-            return { message: "Delete genre successfully" }
         }
         catch (error) {
             console.error("Error deleting genre from database:", error)

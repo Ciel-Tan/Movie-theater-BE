@@ -43,7 +43,17 @@ const directorController = {
             console.error("Error in directorService.updateDirector:", error);
             throw error
         }
-    }
+    },
+
+    async deleteDirector(director_id) {
+        try {
+            await directorService.deleteDirector(director_id)
+        }
+        catch (error) {
+            console.error("Error in directorService.deleteDirector:", error);
+            throw error
+        }
+    },
 }
 
 export default directorController

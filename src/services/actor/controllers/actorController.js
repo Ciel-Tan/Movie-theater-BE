@@ -43,7 +43,17 @@ const actorController = {
             console.error("Error in actorService.updateActor:", error);
             throw error
         }
-    }
+    },
+
+    async deleteActor(actor_id) {
+        try {
+            await actorService.deleteActor(actor_id)
+        }
+        catch (error) {
+            console.error("Error in actorService.deleteActor:", error);
+            throw error
+        }
+    },
 }
 
 export default actorController

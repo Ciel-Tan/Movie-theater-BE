@@ -47,8 +47,7 @@ const roomController = {
 
     async deleteRoom(room_id) {
         try {
-            const room = await roomService.deleteRoom(room_id);
-            return room
+            await roomService.deleteRoom(room_id);
         }
         catch (error) {
             console.error("Error deleting room in roomService.deleteRoom:", error);
