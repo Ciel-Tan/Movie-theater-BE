@@ -829,7 +829,7 @@
     },
     "/api/actors/getAll": {
       "get": {
-        "tags": ["Genre Controller"],
+        "tags": ["Actor Controller"],
         "responses": {
           "200": {
             "content": {
@@ -1096,6 +1096,112 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/showtimes/getAll": {
+      "get": {
+        "tags": ["Showtime Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Showtime"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/showtimes/{showtime_id}": {
+      "get": {
+        "tags": ["Showtime Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "showtime_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Showtime"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Showtime Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "showtime_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Showtime"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Showtime Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "showtime_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Showtime deleted successfully" }
+                  }
                 }
               }
             }

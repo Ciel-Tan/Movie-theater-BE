@@ -23,7 +23,7 @@ const accountController = {
         }
     },
 
-    async getAllAccount () {
+    async getAllAccounts () {
         try {
             const accounts = await accountService.getAllAccounts()
             return accounts

@@ -14,12 +14,13 @@ export async function POST(request, { params }) {
             language,
             genre_ids,
             director_id,
-            actor_ids
+            actor_ids,
+            showtime
         } = await request.json();
 
         if (
             !poster_image || !title || !description || !age_rating || !run_time || 
-            !release_date || !trailer_link || !language || !genre_ids || !director_id || !actor_ids
+            !release_date || !trailer_link || !language || !director_id
         ) {
             return NextResponse.json({ message: "All fields are required" }, { status: 400 })
         }
@@ -35,7 +36,8 @@ export async function POST(request, { params }) {
             language: language,
             genre_ids: genre_ids,
             director_id: director_id,
-            actor_ids: actor_ids
+            actor_ids: actor_ids,
+            showtime: showtime
         };
 
         const newMovie = await services.movieService.movieController.default.createMovie(movieData);

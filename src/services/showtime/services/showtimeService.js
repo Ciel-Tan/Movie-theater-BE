@@ -59,4 +59,15 @@ export const showtimeService = {
             throw error;
         }
     },
+
+    async deleteShowtime(showtime_id) {
+        try {
+            await db.query(`DELETE FROM showtime WHERE showtime_id = ?`, [showtime_id])
+            return { message: "Showtime deleted successfully" }
+        }
+        catch (error) {
+            console.error("Error deleting showtime from database:", error)
+            throw error    
+        }
+    }
 }

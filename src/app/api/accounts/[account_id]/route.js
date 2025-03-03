@@ -4,34 +4,23 @@ import { NextResponse } from "next/server"
 export async function GET(request, {params}) {
     try {
         const awaitedParams = await Promise.resolve(params);
-        const action = awaitedParams.accountRoute
+        const account_id = parseInt(awaitedParams.account_id, 10)
 
-        let responseAccounts
-        switch (action) {
-            case 'getAll':
-                responseAccounts = await services.accountService.accountController.default.getAllAccount()
-                break;
-            default:
-                const account_id = parseInt(action, 10)
-
-                if (isNaN(account_id)) {
-                    return NextResponse.json({ message: "Invalid account id" }, { status: 400 })
-                }
-
-                if (!account_id) {
-                    return NextResponse.json({ message: "Account_id is required" }, { status: 400 })
-                }
-
-                responseAccounts = await services.accountService.accountController.default.getAccountById(account_id)
-
-                if (!responseAccounts) {
-                    return NextResponse.json({ message: "Account not found" }, { status: 404 })
-                }
-
-                break;
+        if (isNaN(account_id)) {
+            return NextResponse.json({ message: "Invalid account id" }, { status: 400 })
         }
 
-        return NextResponse.json(responseAccounts, { status: 200 })
+        if (!account_id) {
+            return NextResponse.json({ message: "Account_id is required" }, { status: 400 })
+        }
+
+        const account = await services.accountService.accountController.default.getAccountById(account_id)
+
+        if (!responseAccounts) {
+            return NextResponse.json({ message: "Account not found" }, { status: 404 })
+        }
+
+        return NextResponse.json(account, { status: 200 })
     }
     catch (error) {
         console.error("Getting account by id error:", error)

@@ -4,33 +4,22 @@ import { NextResponse } from 'next/server';
 export async function GET(request, { params }) {
     try {
         const awaitedParams = await Promise.resolve(params);
-        const action = awaitedParams.movieRoute[0];
+        const movie_id = parseInt(awaitedParams.movie_id, 10)
 
-        let responseData;
-        switch (action) {
-            case 'getAll':
-                responseData = await services.movieService.movieController.default.getAllMovies();
-                break;
-            default:
-                const movie_id = parseInt(action, 10)
-
-                if (isNaN(movie_id)) {
-                    return NextResponse.json({ message: "Invalid movie id" }, { status: 400 })
-                }
-
-                if (!movie_id) {
-                    return NextResponse.json({ message: "Movie id is required" }, { status: 400 })
-                }
-
-                responseData = await services.movieService.movieController.default.getMovieById(movie_id);
-
-                if (!responseData) {
-                    return NextResponse.json({ message: 'Movie not found' }, { status: 404 });
-                }
-
-                break;
-                
+        if (isNaN(movie_id)) {
+            return NextResponse.json({ message: "Invalid movie id" }, { status: 400 })
         }
+
+        if (!movie_id) {
+            return NextResponse.json({ message: "Movie id is required" }, { status: 400 })
+        }
+
+        responseData = await services.movieService.movieController.default.getMovieById(movie_id);
+
+        if (!responseData) {
+            return NextResponse.json({ message: 'Movie not found' }, { status: 404 });
+        }
+
         return Response.json(responseData, { status: 200 });
     }
     catch (error) {
@@ -42,7 +31,7 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
     try {
         const awaitedParams = await Promise.resolve(params)
-        const movie_id = parseInt(awaitedParams.movieRoute[0], 10)
+        const movie_id = parseInt(awaitedParams.movie_id, 10)
         const requestBody = await request.json()
 
         if (isNaN(movie_id)) {
@@ -66,7 +55,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
     try {
         const awaitedParams = await Promise.resolve(params)
-        const movie_id = parseInt(awaitedParams.movieRoute[0], 10)
+        const movie_id = parseInt(awaitedParams.movie_id, 10)
 
         if (isNaN(movie_id)) {
             return NextResponse.json({ message: "Invalid movie id" }, { status: 400 })

@@ -42,9 +42,9 @@ export async function PUT(request, {params}) {
             return NextResponse.json({ message: "Showtime id is required" }, { status: 400 })
         }
 
-        const updatedshowtime = await services.showtimeService.showtimeController.default.updateShowtime(showtime_id, requestBody);
+        const updatedShowtime = await services.showtimeService.showtimeController.default.updateShowtime(showtime_id, requestBody);
 
-        return NextResponse.json(updatedshowtime, { status: 200 })
+        return NextResponse.json(updatedShowtime, { status: 200 })
     }
     catch (error) {
         console.error("Error updating showtime:", error);

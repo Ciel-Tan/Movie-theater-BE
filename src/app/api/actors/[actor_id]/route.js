@@ -3,35 +3,24 @@ import { NextResponse } from "next/server";
 
 export async function GET(request, {params}) {
     try {
-        const awaitedParams = await Promise.resolve(params);
-        const action = awaitedParams.actor_id
-
-        let response
-        switch (action) {
-            case 'getAll':
-                response = await services.actorService.actorController.default.getAllActors()
-                break;
-            default:
-                const actor_id = parseInt(action, 10)
-
-                if (isNaN(actor_id)) {
-                    return NextResponse.json({ message: "Invalid actor id" }, { status: 400 })
-                }
-
-                if (!actor_id) {
-                    return NextResponse.json({ message: "Actor id is required" }, { status: 400 })
-                }
-
-                response = await services.actorService.actorController.default.getActorById(actor_id)
-
-                if (!response) {
-                    return NextResponse.json({ message: "Actor not found" }, { status: 404 })
-                }
-
-                break;
+        const awaitedParams = await Promise.resolve(params); 
+        const actor_id = parseInt(awaitedParams.actor_id, 10)
+        
+        if (isNaN(actor_id)) {
+            return NextResponse.json({ message: "Invalid actor id" }, { status: 400 })
         }
 
-        return NextResponse.json(response, { status: 200 })
+        if (!actor_id) {
+            return NextResponse.json({ message: "Actor id is required" }, { status: 400 })
+        }
+
+        const actor = await services.actorService.actorController.default.getActorById(actor_id)
+
+        if (!response) {
+            return NextResponse.json({ message: "Actor not found" }, { status: 404 })
+        }
+
+        return NextResponse.json(actor, { status: 200 })
     }
     catch (error) {
         console.error("Getting actor info error:", error)

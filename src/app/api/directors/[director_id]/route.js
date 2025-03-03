@@ -4,34 +4,23 @@ import { NextResponse } from "next/server";
 export async function GET(request, {params}) {
     try {
         const awaitedParams = await Promise.resolve(params);
-        const action = awaitedParams.director_id
-
-        let response
-        switch (action) {
-            case 'getAll':
-                response = await services.directorService.directorController.default.getAllDirectors()
-                break;
-            default:
-                const director_id = parseInt(action, 10)
-
-                if (isNaN(director_id)) {
-                    return NextResponse.json({ message: "Invalid director id" }, { status: 400 })
-                }
-
-                if (!director_id) {
-                    return NextResponse.json({ message: "Director_id is required" }, { status: 400 })
-                }
-
-                response = await services.directorService.directorController.default.getDirectorById(director_id)
-
-                if (!response) {
-                    return NextResponse.json({ message: "Director not found" }, { status: 404 })
-                }
-
-                break;
+        const director_id = parseInt(awaitedParams.director_id, 10)
+        
+        if (isNaN(director_id)) {
+            return NextResponse.json({ message: "Invalid director id" }, { status: 400 })
         }
 
-        return NextResponse.json(response, { status: 200 })
+        if (!director_id) {
+            return NextResponse.json({ message: "Director_id is required" }, { status: 400 })
+        }
+
+        const director = await services.directorService.directorController.default.getDirectorById(director_id)
+
+        if (!response) {
+            return NextResponse.json({ message: "Director not found" }, { status: 404 })
+        }
+
+        return NextResponse.json(director, { status: 200 })
     }
     catch (error) {
         console.error("Getting director info error:", error)
