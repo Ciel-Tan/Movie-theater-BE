@@ -333,6 +333,29 @@
             "type": "string"
           }
         }
+      },
+      "Booking": {
+        "type": "object",
+        "properties": {
+          "booking_id": {
+            "type": "integer"
+          },
+          
+          "show_datetime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "booking_fee": {
+            "type": "number",
+            "format": "float"
+          },
+          "account": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "showtime_id": {
+            "$ref": "#/components/schemas/Showtime"
+          }
+        }
       }
     }
   },
@@ -1498,6 +1521,138 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Membership"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/getAll": {
+      "get": {
+        "tags": ["Booking Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Booking"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/{booking_id}": {
+      "get": {
+        "tags": ["Booking Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Booking Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Booking"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Booking Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Booking deleted successfully" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/create": {
+      "post": {
+        "tags": ["Booking Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Booking"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
                 }
               }
             }

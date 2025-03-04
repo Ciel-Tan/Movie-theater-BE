@@ -44,6 +44,10 @@ export async function PUT(request, {params}) {
 
         const updatedShowtime = await services.showtimeService.showtimeController.default.updateShowtime(showtime_id, requestBody);
 
+        if (!updatedShowtime) {
+            return NextResponse.json({ message: "Showtime not found" }, { status: 404 })
+        }
+
         return NextResponse.json(updatedShowtime, { status: 200 })
     }
     catch (error) {
