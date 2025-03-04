@@ -18,13 +18,13 @@ export async function POST(request, { params }) {
         const responseChange = await services.accountService.accountController.default.changePassword(account_id, currentPassword, newPassword)
 
         if (!responseChange) {
-            return NextResponse.json({ message: "Account not found" }, { status: 400 })
+            return NextResponse.json({ message: "Account not found" }, { status: 404 })
         }
 
         return NextResponse.json({ message: "Password changed successfully" }, { status: 200 })
     }
     catch (error) {
         console.error("Changing password error:", error)
-        return NextResponse.json({ message: "Changing password failed:", error: error.message }, { status: 400 })
+        return NextResponse.json({ message: "Changing password failed:", error: error.message }, { status: 500 })
     }
 }

@@ -24,7 +24,7 @@ export async function GET(request, {params}) {
     }
     catch (error) {
         console.error("Getting actor info error:", error)
-        return NextResponse.json({ message: "Getting info actor failed:", error: error.message }, { status: 400 })
+        return NextResponse.json({ message: "Getting info actor failed:", error: error.message }, { status: 500 })
     }
 }
 
@@ -43,6 +43,10 @@ export async function PUT(request, { params }) {
         }
 
         const update = await services.actorService.actorController.default.updateActor(actor_id, actor_name)
+
+        if (!update) {
+            return NextResponse.json({ message: "Actor not found" }, { status: 404 })
+        }
 
         return NextResponse.json(update, { status: 200 })
     }

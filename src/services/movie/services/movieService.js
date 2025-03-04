@@ -18,7 +18,7 @@ export const movieService = {
                     m.age_rating, m.run_time, m.release_date, m.trailer_link, m.language,
                     d.director_id,
                     d.director_name,
-                    
+
                     (SELECT JSON_ARRAYAGG(genre_json)
                     FROM (
                         SELECT DISTINCT JSON_OBJECT(
@@ -47,10 +47,15 @@ export const movieService = {
                     FROM (
                         SELECT DISTINCT JSON_OBJECT(
                             'showtime_id', st_sub.showtime_id,
-                            'show_datetime', st_sub.show_datetime,
-                            'room_id', st_sub.room_id
+                            'movie_id', st_sub.movie_id,
+                            'room', JSON_OBJECT(
+                                'room_id', r_sub.room_id,
+                                'room_name', r_sub.room_name
+                            ),
+                            'show_datetime', st_sub.show_datetime
                         ) AS showtime_json
                         FROM showtime st_sub
+                        JOIN room r_sub ON st_sub.room_id = r_sub.room_id
                         WHERE st_sub.movie_id = m.movie_id
                     ) AS distinct_showtime
                     ) AS showtime

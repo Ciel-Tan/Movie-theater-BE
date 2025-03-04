@@ -14,12 +14,12 @@ export async function POST(request) {
             return NextResponse.json({ message: "Invalid discount rate" }, { status: 400 })
         }
 
-        const newMembership = await services.membershipService.membershipController.default.createMembership({membership_name, discount_rate});
+        const newMembership = await services.membershipService.membershipController.default.createMembership({ membership_name, discount_rate });
 
         return NextResponse.json(newMembership, { status: 201 })
     }
     catch (error) {
         console.error("Creating membership error:", error)
-        return NextResponse.json({ message: "Creating membership failed:", error: error.message }, { status: 400 })
+        return NextResponse.json({ message: "Creating membership failed:", error: error.message }, { status: 500 })
     }
 }

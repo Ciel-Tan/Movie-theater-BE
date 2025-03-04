@@ -29,8 +29,8 @@ export async function POST(request) {
     catch (error) {
         console.error("Error during account registration:", error);
 
-        if (error.message === "Email already exists") { // Example specific error handling
-            return NextResponse.json({ message: "Email already exists" }, { status: 400 }); // Or 409 Conflict
+        if (error.message === "Email already exists") {
+            return NextResponse.json({ message: "Email already exists" }, { status: 400 });
         }
 
         return NextResponse.json({ message: "Failed to create account", error: error.message }, { status: 500 });

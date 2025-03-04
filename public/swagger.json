@@ -62,8 +62,8 @@
           "movie_id": {
             "type": "integer"
           },
-          "room_id": {
-            "type": "integer"
+          "room": {
+            "$ref": "#/components/schemas/Room"
           },
           "show_datetime": {
             "type": "string",

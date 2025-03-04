@@ -15,6 +15,6 @@ export async function POST(request) {
     }
     catch (error) {
         console.error("Creating actor error:", error)
-        return NextResponse.json({ message: "Creating actor failed:", error: error.message }, { status: 400 })
+        return NextResponse.json({ message: "Creating actor failed:", error: error.message }, { status: 500 })
     }
 }

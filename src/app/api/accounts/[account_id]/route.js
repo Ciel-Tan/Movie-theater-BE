@@ -24,7 +24,7 @@ export async function GET(request, {params}) {
     }
     catch (error) {
         console.error("Getting account by id error:", error)
-        return NextResponse.json({ message: "Getting info account failed:", error: error.message }, { status: 400 })
+        return NextResponse.json({ message: "Getting info account failed:", error: error.message }, { status: 500 })
     }
 }
 
@@ -52,7 +52,7 @@ export async function PUT(request, {params}) {
     }
     catch (error) {
         console.error("Updating account error:", error)
-        return NextResponse.json({ message: "Updating account failed:", error: error.message }, { status: 400 })
+        return NextResponse.json({ message: "Updating account failed:", error: error.message }, { status: 500 })
     }
 }
 

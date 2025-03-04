@@ -15,6 +15,6 @@ export async function POST(request) {
     }
     catch (error) {
         console.error("Creating director error:", error)
-        return NextResponse.json({ message: "Creating director failed:", error: error.message }, { status: 400 })
+        return NextResponse.json({ message: "Creating director failed:", error: error.message }, { status: 500 })
     }
 }

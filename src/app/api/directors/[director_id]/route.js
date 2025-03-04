@@ -24,7 +24,7 @@ export async function GET(request, {params}) {
     }
     catch (error) {
         console.error("Getting director info error:", error)
-        return NextResponse.json({ message: "Getting info director failed:", error: error.message }, { status: 400 })
+        return NextResponse.json({ message: "Getting info director failed:", error: error.message }, { status: 500 })
     }
 }
 
@@ -43,6 +43,10 @@ export async function PUT(request, { params }) {
         }
 
         const update = await services.directorService.directorController.default.updateDirector(director_id, director_name)
+
+        if (!update) {
+            return NextResponse.json({ message: "Director not found" }, { status: 404 })
+        }
 
         return NextResponse.json(update, { status: 200 })
     }

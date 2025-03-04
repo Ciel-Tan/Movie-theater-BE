@@ -46,6 +46,6 @@ export async function POST(request, { params }) {
     }
     catch (error) {
         console.error("Creating movie error:", error)
-        return NextResponse.json({ message: "Creating movie failed:", error: error.message }, { status: 400 })
+        return NextResponse.json({ message: "Creating movie failed:", error: error.message }, { status: 500 })
     }
 }

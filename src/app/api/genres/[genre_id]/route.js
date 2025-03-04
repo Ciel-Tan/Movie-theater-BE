@@ -44,6 +44,10 @@ export async function PUT(request, {params}) {
 
         const updatedGenre = await services.genreService.genreController.default.updateGenre(genre_id, requestBody);
 
+        if (!updatedGenre) {
+            return NextResponse.json({ message: "Genre not found" }, { status: 404 })
+        }
+
         return NextResponse.json(updatedGenre, { status: 200 })
     }
     catch (error) {

@@ -32,7 +32,7 @@ export async function PUT(request, {params}) {
     try {
         const awaitedParams = await Promise.resolve(params);
         const room_id = parseInt(awaitedParams.room_id, 10);
-        const requestBody = await request.json();
+        const { room_name } = await request.json();
 
         if(isNaN(room_id)) {
             return NextResponse.json({ message: "Invalid room id" }, { status: 400 })
@@ -42,7 +42,11 @@ export async function PUT(request, {params}) {
             return NextResponse.json({ message: "Room id is required" }, { status: 400 })
         }
 
-        const updatedRoom = await services.roomService.roomController.default.updateRoom(room_id, requestBody);
+        const updatedRoom = await services.roomService.roomController.default.updateRoom(room_id, room_name);
+
+        if (!updatedRoom) {
+            return NextResponse.json({ message: "Room not found" }, { status: 404 })
+        }
 
         return NextResponse.json(updatedRoom, { status: 200 })
     }

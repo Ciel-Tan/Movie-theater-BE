@@ -44,6 +44,10 @@ export async function PUT(request, { params }) {
 
         const update = await services.membershipService.membershipController.default.updateMembership(membership_id, {membership_name, discount_rate})
 
+        if (!update) {
+            return NextResponse.json({ message: "Membership not found" }, { status: 404 })
+        }
+
         return NextResponse.json(update, { status: 200 })
     }
     catch (error) {
