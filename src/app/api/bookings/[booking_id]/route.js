@@ -33,17 +33,17 @@ export async function PUT(request, {params}) {
         const awaitedParams = await Promise.resolve(params);
         const booking_id = parseInt(awaitedParams.booking_id, 10);
         const requestBody = await request.json();
-        const { showtime_id, account_id, booking_datetime, booking_fee } = requestBody;
+        const { showtime_id, account_id, booking_datetime, booking_fee, booking_ticket, booking_seat } = requestBody;
 
-        showtime_id = parseInt(showtime_id, 10);
-        account_id = parseInt(account_id, 10);
-        booking_fee = parseFloat(booking_fee);
+        const showtimeId = parseInt(showtime_id, 10);
+        const accountId = parseInt(account_id, 10);
+        const bookingFee = parseFloat(booking_fee);
 
-        if(isNaN(booking_id) || isNaN(showtime_id) || isNaN(account_id) || isNaN(booking_fee)) {
+        if(isNaN(booking_id) || isNaN(showtimeId) || isNaN(accountId) || isNaN(bookingFee)) {
             return NextResponse.json({ message: "Invalid data type" }, { status: 400 })
         }
 
-        if(!booking_id || !showtime_id || !account_id || !booking_datetime || !booking_fee) {
+        if(!booking_id || !showtime_id || !account_id || !booking_datetime || !booking_fee || !booking_ticket || !booking_seat) {
             return NextResponse.json({ message: "All fields are required" }, { status: 400 })
         }
 

@@ -3,20 +3,11 @@ import { NextResponse } from "next/server"
 
 export async function POST(request, { params }) {
     try {
+        const movieData = await request.json();
         const {
-            poster_image,
-            title,
-            description,
-            age_rating,
-            run_time,
-            release_date,
-            trailer_link,
-            language,
-            genre_ids,
-            director_id,
-            actor_ids,
-            showtime
-        } = await request.json();
+            poster_image, title, description, age_rating, run_time,
+            release_date, trailer_link, language, director_id,
+        } = movieData
 
         if (
             !poster_image || !title || !description || !age_rating || !run_time || 
@@ -24,21 +15,6 @@ export async function POST(request, { params }) {
         ) {
             return NextResponse.json({ message: "All fields are required" }, { status: 400 })
         }
-
-        const movieData = {   
-            poster_image: poster_image,
-            title: title,
-            description: description,
-            age_rating: age_rating,
-            run_time: run_time,
-            release_date: release_date,
-            trailer_link: trailer_link,
-            language: language,
-            genre_ids: genre_ids,
-            director_id: director_id,
-            actor_ids: actor_ids,
-            showtime: showtime
-        };
 
         const newMovie = await services.movieService.movieController.default.createMovie(movieData);
 

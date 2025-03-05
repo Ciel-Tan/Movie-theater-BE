@@ -53,7 +53,23 @@
           }
         }
       },
-      "Showtime": {
+      "ShowtimeMovie": {
+        "type": "object",
+        "properties": {
+          "showtime_id": {
+            "type": "integer"
+          },
+          "show_datetime": {
+            "type": "string",
+            "format": "date",
+            "example": "2023-01-01T00:00:00.000Z"
+          },
+          "room": {
+            "$ref": "#/components/schemas/Room"
+          }
+        }
+      },
+      "ShowtimeDetail": {
         "type": "object",
         "properties": {
           "showtime_id": {
@@ -69,6 +85,21 @@
             "type": "string",
             "format": "date",
             "example": "2023-01-01T00:00:00.000Z"
+          }
+        }
+      },
+      "ShowtimeRequestBody": {
+        "type": "object",
+        "properties": {
+          "movie_id": {
+            "type": "integer"
+          },
+          "room_id": {
+            "type": "integer"
+          },
+          "show_datetime": {
+            "type": "string",
+            "format": "date"
           }
         }
       },
@@ -171,50 +202,74 @@
           "showtime": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Showtime"
+              "$ref": "#/components/schemas/ShowtimeMovie"
             }
           }
         }
       },
-      "MovieUpdateRequest": {
+      "MovieRequestBody": {
         "type": "object",
         "properties": {
           "poster_image": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "poster_url": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "description": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "age_rating": {
-            "type": "integer",
-            "nullable": true
+            "type": "integer"
           },
           "run_time": {
-            "type": "integer",
-            "nullable": true
+            "type": "integer"
           },
           "release_date": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           },
           "trailer_link": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "language": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
+          },
+          "genres": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "genre_id": {
+                  "type": "integer"
+                }
+              }
+            }
           },
           "director_id": {
-            "type": "integer",
-            "nullable": true
+            "type": "integer"
+          },
+          "actors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "actor_id": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "showtime": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "showtime_id": {
+                  "type": "integer"
+                }
+              }
+            }
           }
         }
       },
@@ -380,7 +435,7 @@
             "type": "integer"
           },
           
-          "show_datetime": {
+          "booking_datetime": {
             "type": "string",
             "format": "date-time"
           },
@@ -391,8 +446,8 @@
           "account": {
             "$ref": "#/components/schemas/Account"
           },
-          "showtime_id": {
-            "$ref": "#/components/schemas/Showtime"
+          "showtime": {
+            "$ref": "#/components/schemas/ShowtimeDetail"
           },
           "booking_ticket": {
             "type": "object",
@@ -406,12 +461,48 @@
             }
           },
           "booking_seat": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Seat"
+            }
+          }
+        }
+      },
+      "BookingRequestBody": {
+        "type": "object",
+        "properties": {
+          "booking_datetime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "booking_fee": {
+            "type": "number",
+            "format": "float"
+          },
+          "account_id": {
+            "type": "integer"
+          },
+          "showtime_id": {
+            "type": "integer"
+          },
+          "booking_ticket": {
             "type": "object",
             "properties": {
-              "seat": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Seat"
+              "ticket_quantity": {
+                "type": "integer"
+              },
+              "ticket_id": {
+                "type": "integer"
+              }
+            }
+          },
+          "booking_seat": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "seat_id": {
+                  "type": "integer"
                 }
               }
             }
@@ -437,7 +528,7 @@
         "type": "object",
         "properties": {
           "seat_id": {
-            "type": "string"
+            "type": "integer"
           },
           "seat_location": {
             "type": "string"
@@ -523,7 +614,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MovieUpdateRequest"
+                "$ref": "#/components/schemas/MovieRequestBody"
               }
             }
           }
@@ -581,7 +672,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MovieDetail"
+                "$ref": "#/components/schemas/MovieRequestBody"
               }
             }
           }
@@ -1237,7 +1328,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Showtime"
+                    "$ref": "#/components/schemas/ShowtimeDetail"
                   }
                 }
               }
@@ -1264,7 +1355,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Showtime"
+                  "$ref": "#/components/schemas/ShowtimeDetail"
                 }
               }
             }
@@ -1288,7 +1379,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Showtime"
+                "$ref": "#/components/schemas/ShowtimeRequestBody"
               }
             }
           }
@@ -1298,7 +1389,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Room"
+                  "$ref": "#/components/schemas/ShowtimeDetail"
                 }
               }
             }
@@ -1341,7 +1432,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Showtime"
+                "$ref": "#/components/schemas/ShowtimeRequestBody"
               }
             }
           }
@@ -1351,7 +1442,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Showtime"
+                  "$ref": "#/components/schemas/ShowtimeDetail"
                 }
               }
             }
@@ -1690,7 +1781,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Booking"
+                "$ref": "#/components/schemas/BookingRequestBody"
               }
             }
           }
@@ -1743,7 +1834,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Booking"
+                "$ref": "#/components/schemas/BookingRequestBody"
               }
             }
           }

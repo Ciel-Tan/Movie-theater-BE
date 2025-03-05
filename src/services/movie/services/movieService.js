@@ -76,52 +76,12 @@ export const movieService = {
     },
 
     async getAllMovies() {
-        const movies = await this.getMovieQuery()
-
-        return movies.map(movie => ({
-            movie_id: movie.movie_id,
-            title: movie.title,
-            poster_image: movie.poster_image,
-            poster_url: movie.poster_url,
-            description: movie.description,
-            age_rating: movie.age_rating,
-            run_time: movie.run_time,
-            release_date: movie.release_date,
-            trailer_link: movie.trailer_link,
-            language: movie.language,
-            genres: movie.genres,
-            director: {
-                director_id: movie.director_id,
-                director_name: movie.director_name
-            },
-            actors: movie.actors,
-            showtime: movie.showtime
-        }));
+        return await this.getMovieQuery()
     },
 
     async getMovieById(movie_id) {
         const movies = await this.getMovieQuery(movie_id)
-        const movie = movies[0]
-
-        return {
-            movie_id: movie.movie_id,
-            title: movie.title,
-            poster_image: movie.poster_image,
-            poster_url: movie.poster_url,
-            description: movie.description,
-            age_rating: movie.age_rating,
-            run_time: movie.run_time,
-            release_date: movie.release_date,
-            trailer_link: movie.trailer_link,
-            language: movie.language,
-            genres: movie.genres,
-            director: {
-                director_id: movie.director_id,
-                director_name: movie.director_name
-            },
-            actors: movie.actors,
-            showtime: movie.showtime
-        }
+        return movies[0]
     },
 
     async createMovieTable(movieData) {
@@ -171,11 +131,11 @@ export const movieService = {
 
     async createMovie(movieData) {
         try {
-            const { genre_ids, actor_ids, ...rest } = movieData;
+            const { genre, actor, ...rest } = movieData;
             
             const movie_id = await this.createMovieTable(rest)
-            await this.createMovieRelationships(movie_id, genre_ids, 'movie_genre', 'genre_id')
-            await this.createMovieRelationships(movie_id, actor_ids, 'movie_actor', 'actor_id')
+            await this.createMovieRelationships(movie_id, genre, 'movie_genre', 'genre_id')
+            await this.createMovieRelationships(movie_id, actor, 'movie_actor', 'actor_id')
 
             const movie = await this.getMovieById(movie_id);
             return movie;
@@ -265,11 +225,11 @@ export const movieService = {
 
     async updateMovie(movie_id, movieData) {
         try {
-            const { genre_ids, actor_ids, showtime, ...rest } = movieData;
+            const { genres, actors, showtime, ...rest } = movieData;
             
             await this.updateMovieTable(movie_id, rest);
-            await this.updateMovieRelationships(movie_id, genre_ids, 'movie_genre', 'genre_id');
-            await this.updateMovieRelationships(movie_id, actor_ids, 'movie_actor', 'actor_id');
+            await this.updateMovieRelationships(movie_id, genres, 'movie_genre', 'genre_id');
+            await this.updateMovieRelationships(movie_id, actors, 'movie_actor', 'actor_id');
             await this.updateMovieShowtime(movie_id, showtime)
 
             const movie = await this.getMovieById(movie_id)
