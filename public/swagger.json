@@ -59,8 +59,8 @@
           "showtime_id": {
             "type": "integer"
           },
-          "movie_id": {
-            "type": "integer"
+          "movie": {
+            "$ref": "#/components/schemas/Movie"
           },
           "room": {
             "$ref": "#/components/schemas/Room"
@@ -69,6 +69,45 @@
             "type": "string",
             "format": "date",
             "example": "2023-01-01T00:00:00.000Z"
+          }
+        }
+      },
+      "Movie": {
+        "type": "object",
+        "properties": {
+          "movie_id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "poster_image": {
+            "type": "string"
+          },
+          "poster_url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "age_rating": {
+            "type": "integer"
+          },
+          "run_time": {
+            "type": "integer"
+          },
+          "release_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "trailer_link": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "director": {
+            "$ref": "#/components/schemas/Director"
           }
         }
       },
@@ -354,6 +393,28 @@
           },
           "showtime_id": {
             "$ref": "#/components/schemas/Showtime"
+          },
+          "booking_ticket": {
+            "type": "object",
+            "properties": {
+              "ticket_quantity": {
+                "type": "integer"
+              },
+              "ticket": {
+                "$ref": "#/components/schemas/Ticket"
+              }
+            }
+          },
+          "booking_seat": {
+            "type": "object",
+            "properties": {
+              "seat": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Seat"
+                }
+              }
+            }
           }
         }
       },
@@ -369,6 +430,31 @@
           "ticket_price": {
             "type": "number",
             "format": "float"
+          }
+        }
+      },
+      "Seat": {
+        "type": "object",
+        "properties": {
+          "seat_id": {
+            "type": "string"
+          },
+          "seat_location": {
+            "type": "string"
+          },
+          "seat_type": {
+            "$ref": "#/components/schemas/Seat_Type"
+          }
+        }
+      },
+      "Seat_Type": {
+        "type": "object",
+        "properties": {
+          "seat_type_id": {
+            "type": "integer"
+          },
+          "seat_type_name": {
+            "type": "string"
           }
         }
       }
@@ -1800,6 +1886,138 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Ticket"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seat_types/getAll": {
+      "get": {
+        "tags": ["Seat_Type Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Seat_Type"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seat_types/{seat_type_id}": {
+      "get": {
+        "tags": ["Seat_Type Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "seat_type_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Seat_Type"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Seat_Type Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "seat_type_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Seat_Type"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Seat_Type"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Seat_Type Controller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "seat_type_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Seat type deleted successfully" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/seat_types/create": {
+      "post": {
+        "tags": ["Seat_Type Controller"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Seat_Type"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Seat_Type"
                 }
               }
             }
