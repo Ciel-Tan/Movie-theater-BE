@@ -26,11 +26,11 @@ export const membershipService = {
     async createMembership (membershipData) {
         try {
             const { membership_name, discount_rate } = membershipData
-            membership_name = membership_name.replace(/\s+/g, ' ').trim();
+            const name = membership_name.replace(/\s+/g, ' ').trim();
 
             const result = await db.query(
                 'INSERT INTO membership_type SET membership_name = ?, discount_rate = ?',
-                [membership_name, discount_rate]
+                [name, discount_rate]
             );
 
             const membershipById = await this.getMembershipById(result.insertId);
@@ -64,8 +64,10 @@ export const membershipService = {
 
     async deleteMembership(membership_id) {
         try {
-            await db.query(`DELETE FROM membership_type WHERE membership_id = ?`, [membership_id])
             await db.query('UPDATE account SET membership_id = NULL WHERE membership_id = ?', [membership_id])
+            const result = await db.query(`DELETE FROM membership_type WHERE membership_id = ?`, [membership_id])
+
+            return result.affectedRows
         }
         catch (error) {
             console.error("Error deleting membership from database:", error)

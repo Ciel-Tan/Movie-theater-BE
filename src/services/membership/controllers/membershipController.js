@@ -47,7 +47,7 @@ const membershipController = {
 
     async deleteMembership(membership_id) {
         try {
-            await membershipService.deleteMembership(membership_id)
+            return await membershipService.deleteMembership(membership_id)
         }
         catch (error) {
             console.error("Error in membershipService.deleteMembership:", error);

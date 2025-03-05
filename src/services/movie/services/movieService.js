@@ -283,10 +283,12 @@ export const movieService = {
 
     async deleteMovie(movie_id) {
         try {
-            await db.query(`DELETE FROM movie WHERE movie_id = ?`, [movie_id])
-            await db.query(`DELETE FROM movie_genre WHERE movie_id = ?`, [movie_id])
-            await db.query(`DELETE FROM movie_actor WHERE movie_id = ?`, [movie_id])
             await db.query(`DELETE FROM showtime WHERE movie_id = ?`, [movie_id])
+            await db.query(`DELETE FROM movie_actor WHERE movie_id = ?`, [movie_id])
+            await db.query(`DELETE FROM movie_genre WHERE movie_id = ?`, [movie_id])
+            const result = await db.query(`DELETE FROM movie WHERE movie_id = ?`, [movie_id])
+
+            return result.affectedRows
         }
         catch (error) {
             console.error("Error deleting movie in database:", error);

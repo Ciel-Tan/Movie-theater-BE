@@ -62,7 +62,8 @@ export const bookingService = {
 
     async deleteBooking(booking_id) {
         try {
-            await db.query(`DELETE FROM booking WHERE booking_id = ?`, [booking_id])
+            const result = await db.query(`DELETE FROM booking WHERE booking_id = ?`, [booking_id])
+            return result.affectedRows
         }
         catch (error) {
             console.error("Error deleting booking from database:", error)

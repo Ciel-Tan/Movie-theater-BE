@@ -16,7 +16,7 @@ export async function GET(request, {params}) {
 
         const membership = await services.membershipService.membershipController.default.getMembershipById(membership_id)
 
-        if (!response) {
+        if (!membership) {
             return NextResponse.json({ message: "Membership not found" }, { status: 404 })
         }
 
@@ -34,8 +34,10 @@ export async function PUT(request, { params }) {
         const membership_id = parseInt(awaitedParams.membership_id, 10)
         const { membership_name, discount_rate } = await request.json()
 
-        if (isNaN(membership_id)) {
-            return NextResponse.json({ message: "Invalid membership id" }, { status: 400 })
+        const rate = parseFloat(discount_rate)
+
+        if (isNaN(membership_id) || isNaN(rate)) {
+            return NextResponse.json({ message: "Invalid membership id or discount rate" }, { status: 400 })
         }
 
         if (!membership_id) {

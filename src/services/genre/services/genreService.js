@@ -25,9 +25,9 @@ export const genreService = {
 
     async createGenre (genre_name) {
         try {
-            genre_name = genre_name.replace(/\s+/g, ' ').trim();
+            const name = genre_name.replace(/\s+/g, ' ').trim();
 
-            const result = await db.query('INSERT INTO genre SET genre_name = ?', [genre_name]);
+            const result = await db.query('INSERT INTO genre SET genre_name = ?', [name]);
 
             const genreById = await this.getGenreById(result.insertId);
             return genreById
@@ -59,8 +59,10 @@ export const genreService = {
 
     async deleteGenre(genre_id) {
         try {
-            await db.query(`DELETE FROM genre WHERE genre_id = ?`, [genre_id])
             await db.query(`DELETE FROM movie_genre WHERE genre_id = ?`, [genre_id])
+            const result = await db.query(`DELETE FROM genre WHERE genre_id = ?`, [genre_id])
+
+            return result.affectedRows
         }
         catch (error) {
             console.error("Error deleting genre from database:", error)

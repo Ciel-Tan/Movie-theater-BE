@@ -48,7 +48,7 @@ const genreController = {
 
     async deleteGenre(genre_id) {
         try {
-            await genreService.deleteGenre(genre_id)
+            return await genreService.deleteGenre(genre_id)
         }
         catch (error) {
             console.error("Error in genreService.deleteGenre:", error);

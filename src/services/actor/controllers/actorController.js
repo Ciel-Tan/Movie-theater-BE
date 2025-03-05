@@ -47,7 +47,7 @@ const actorController = {
 
     async deleteActor(actor_id) {
         try {
-            await actorService.deleteActor(actor_id)
+            return await actorService.deleteActor(actor_id)
         }
         catch (error) {
             console.error("Error in actorService.deleteActor:", error);

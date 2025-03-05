@@ -47,8 +47,7 @@ const movieController = {
 
     async deleteMovie(movie_id) {
         try {
-            const result = await movieService.deleteMovie(movie_id)
-            return result
+            return await movieService.deleteMovie(movie_id)
         }
         catch (error) {
             console.error("Error deleting movie:", error);

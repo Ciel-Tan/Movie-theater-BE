@@ -47,7 +47,7 @@ const bookingController = {
 
     async deleteBooking(booking_id) {
         try {
-            await bookingService.deleteBooking(booking_id)
+            return await bookingService.deleteBooking(booking_id)
         }
         catch (error) {
             console.error('Error deleting booking in bookingService.deleteBooking:', error)

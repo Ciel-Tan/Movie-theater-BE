@@ -62,7 +62,8 @@ export const showtimeService = {
 
     async deleteShowtime(showtime_id) {
         try {
-            await db.query(`DELETE FROM showtime WHERE showtime_id = ?`, [showtime_id])
+            const result = await db.query(`DELETE FROM showtime WHERE showtime_id = ?`, [showtime_id])
+            return result.affectedRows
         }
         catch (error) {
             console.error("Error deleting showtime from database:", error)

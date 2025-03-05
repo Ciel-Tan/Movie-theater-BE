@@ -47,7 +47,7 @@ const directorController = {
 
     async deleteDirector(director_id) {
         try {
-            await directorService.deleteDirector(director_id)
+            return await directorService.deleteDirector(director_id)
         }
         catch (error) {
             console.error("Error in directorService.deleteDirector:", error);

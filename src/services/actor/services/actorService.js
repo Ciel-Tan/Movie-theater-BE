@@ -25,9 +25,9 @@ export const actorService = {
 
     async createActor (actor_name) {
         try {
-            actor_name = actor_name.replace(/\s+/g, ' ').trim();
+            const name = actor_name.replace(/\s+/g, ' ').trim();
 
-            const result = await db.query('INSERT INTO actor SET actor_name = ?', [actor_name]);
+            const result = await db.query('INSERT INTO actor SET actor_name = ?', [name]);
 
             const actorById = await this.getActorById(result.insertId);
             return actorById
@@ -59,8 +59,10 @@ export const actorService = {
 
     async deleteActor(actor_id) {
         try {
-            await db.query(`DELETE FROM actor WHERE actor_id = ?`, [actor_id])
             await db.query(`DELETE FROM movie_actor WHERE actor_id = ?`, [actor_id])
+            const result = await db.query(`DELETE FROM actor WHERE actor_id = ?`, [actor_id])
+
+            return result.affectedRows
         }
         catch (error) {
             console.error("Error deleting actor from database:", error)

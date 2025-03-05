@@ -25,9 +25,9 @@ export const directorService = {
 
     async createDirector (director_name) {
         try {
-            director_name = director_name.replace(/\s+/g, ' ').trim();
+            const name = director_name.replace(/\s+/g, ' ').trim();
 
-            const result = await db.query('INSERT INTO director SET director_name = ?', [director_name]);
+            const result = await db.query('INSERT INTO director SET director_name = ?', [name]);
 
             const directorById = await this.getDirectorById(result.insertId);
             return directorById
@@ -59,8 +59,10 @@ export const directorService = {
 
     async deleteDirector(director_id) {
         try {
-            await db.query(`DELETE FROM director WHERE director_id = ?`, [director_id])
             await db.query('UPDATE movie SET director_id = NULL WHERE director_id = ?', [director_id])
+            const result = await db.query(`DELETE FROM director WHERE director_id = ?`, [director_id])
+
+            return result.affectedRows
         }
         catch (error) {
             console.error("Error deleting director from database:", error)

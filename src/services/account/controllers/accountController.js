@@ -57,7 +57,7 @@ const accountController = {
 
     async deleteAccount (account_id) {
         try {
-            await accountService.deleteAccount(account_id)
+            return await accountService.deleteAccount(account_id)
         }
         catch (error) {
             console.error("Error in accountService.deleteAccount:", error)
