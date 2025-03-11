@@ -23,6 +23,8 @@ export async function middleware(request) {
     }
 
     if (path.startsWith('/api')) {
+        console.log(request.headers.get('authorization'));
+        console.log(request.headers.get('Authorization'));
         const authorizationHeader = request.headers.get('authorization');
         const token = authorizationHeader?.split(' ')[1];
 
