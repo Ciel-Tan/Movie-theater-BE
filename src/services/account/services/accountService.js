@@ -22,7 +22,15 @@ export const accountService = {
             }
 
             const expiresIn = 3600
-            const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: expiresIn });
+            const token = jwt.sign(
+                {
+                    account_id: user.account_id,
+                    role_id: user.role_id,
+                    email: user.email,
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: expiresIn }
+            );
             return {
                 token,
                 expiresIn: expiresIn

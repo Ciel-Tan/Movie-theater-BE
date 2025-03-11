@@ -552,7 +552,7 @@
     }
   },
   "paths": {
-    "/api/movies/getAll": {
+    "/api/public/movies/getAll": {
       "get": {
         "tags": ["Movie Controller"],
         "responses": {
@@ -571,7 +571,7 @@
         }
       }
     },
-    "/api/movies/{movie_id}": {
+    "/api/public/movies/{movie_id}": {
       "get": {
         "tags": ["Movie Controller"],
         "parameters": [
@@ -595,9 +595,16 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/movies/{movie_id}": {
       "put": {
         "tags": ["Movie Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -634,6 +641,11 @@
       },
       "delete": {
         "tags": ["Movie Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -667,6 +679,11 @@
     "/api/movies/create": {
       "post": {
         "tags": ["Movie Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -769,6 +786,11 @@
     "/api/accounts/{account_id}": {
       "get": {
         "tags": ["Account Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -793,6 +815,11 @@
       },
       "put": {
         "tags": ["Account Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -827,6 +854,11 @@
       },
       "delete": {
         "tags": ["Account Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -856,6 +888,11 @@
     "/api/accounts/change-password/{account_id}": {
       "post": {
         "tags": ["Account Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -864,11 +901,6 @@
             "schema": {
               "type": "integer"
             }
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
           }
         ],
         "requestBody": {
@@ -901,12 +933,31 @@
               }
             }
           }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Password reset email sent" }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/directors/getAll": {
       "get": {
         "tags": ["Director Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -926,6 +977,11 @@
     "/api/directors/{director_id}": {
       "get": {
         "tags": ["Director Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -950,6 +1006,11 @@
       },
       "put": {
         "tags": ["Director Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -987,6 +1048,11 @@
       },
       "delete": {
         "tags": ["Director Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1016,6 +1082,11 @@
     "/api/directors/create": {
       "post": {
         "tags": ["Director Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1045,6 +1116,11 @@
     "/api/actors/getAll": {
       "get": {
         "tags": ["Actor Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1064,6 +1140,11 @@
     "/api/actors/{actor_id}": {
       "get": {
         "tags": ["Actor Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1088,6 +1169,11 @@
       },
       "put": {
         "tags": ["Actor Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1125,6 +1211,11 @@
       },
       "delete": {
         "tags": ["Actor Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1154,6 +1245,11 @@
     "/api/actors/create": {
       "post": {
         "tags": ["Actor Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1183,6 +1279,11 @@
     "/api/rooms/getAll": {
       "get": {
         "tags": ["Room Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1202,6 +1303,11 @@
     "/api/rooms/{room_id}": {
       "get": {
         "tags": ["Room Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1226,6 +1332,11 @@
       },
       "put": {
         "tags": ["Room Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1263,6 +1374,11 @@
       },
       "delete": {
         "tags": ["Room Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1292,6 +1408,11 @@
     "/api/rooms/create": {
       "post": {
         "tags": ["Room Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1321,6 +1442,11 @@
     "/api/showtimes/getAll": {
       "get": {
         "tags": ["Showtime Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1340,6 +1466,11 @@
     "/api/showtimes/{showtime_id}": {
       "get": {
         "tags": ["Showtime Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1364,6 +1495,11 @@
       },
       "put": {
         "tags": ["Showtime Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1398,6 +1534,11 @@
       },
       "delete": {
         "tags": ["Showtime Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1427,6 +1568,11 @@
     "/api/showtimes/create": {
       "post": {
         "tags": ["Showtime Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1453,6 +1599,11 @@
     "/api/genres/getAll": {
       "get": {
         "tags": ["Genre Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1472,6 +1623,11 @@
     "/api/genres/{genre_id}": {
       "get": {
         "tags": ["Genre Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1496,6 +1652,11 @@
       },
       "put": {
         "tags": ["Genre Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1533,6 +1694,11 @@
       },
       "delete": {
         "tags": ["Genre Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1562,6 +1728,11 @@
     "/api/genres/create": {
       "post": {
         "tags": ["Genre Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1591,6 +1762,11 @@
     "/api/memberships/getAll": {
       "get": {
         "tags": ["Membership Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1610,6 +1786,11 @@
     "/api/memberships/{membership_id}": {
       "get": {
         "tags": ["Membership Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1634,6 +1815,11 @@
       },
       "put": {
         "tags": ["Membership Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1668,6 +1854,11 @@
       },
       "delete": {
         "tags": ["Membership Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1697,6 +1888,11 @@
     "/api/memberships/create": {
       "post": {
         "tags": ["Membership Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1723,6 +1919,11 @@
     "/api/bookings/getAll": {
       "get": {
         "tags": ["Booking Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1742,6 +1943,11 @@
     "/api/bookings/{booking_id}": {
       "get": {
         "tags": ["Booking Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1766,6 +1972,11 @@
       },
       "put": {
         "tags": ["Booking Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1800,6 +2011,11 @@
       },
       "delete": {
         "tags": ["Booking Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1829,6 +2045,11 @@
     "/api/bookings/create": {
       "post": {
         "tags": ["Booking Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1855,6 +2076,11 @@
     "/api/tickets/getAll": {
       "get": {
         "tags": ["Ticket Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1874,6 +2100,11 @@
     "/api/tickets/{ticket_id}": {
       "get": {
         "tags": ["Ticket Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1898,6 +2129,11 @@
       },
       "put": {
         "tags": ["Ticket Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1932,6 +2168,11 @@
       },
       "delete": {
         "tags": ["Ticket Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -1961,6 +2202,11 @@
     "/api/tickets/create": {
       "post": {
         "tags": ["Ticket Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1987,6 +2233,11 @@
     "/api/seat_types/getAll": {
       "get": {
         "tags": ["Seat_Type Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -2006,6 +2257,11 @@
     "/api/seat_types/{seat_type_id}": {
       "get": {
         "tags": ["Seat_Type Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2030,6 +2286,11 @@
       },
       "put": {
         "tags": ["Seat_Type Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2064,6 +2325,11 @@
       },
       "delete": {
         "tags": ["Seat_Type Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -2093,6 +2359,11 @@
     "/api/seat_types/create": {
       "post": {
         "tags": ["Seat_Type Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {

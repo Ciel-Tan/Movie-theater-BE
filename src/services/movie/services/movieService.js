@@ -16,8 +16,11 @@ export const movieService = {
                 `SELECT
                     m.movie_id, m.title, m.poster_image, m.poster_url, m.description,
                     m.age_rating, m.run_time, m.release_date, m.trailer_link, m.language,
-                    d.director_id,
-                    d.director_name,
+                    
+                    JSON_OBJECT(
+                        'director_id', d.director_id,
+                        'director_name', d.director_name
+                    ) AS director,
 
                     (SELECT JSON_ARRAYAGG(genre_json)
                     FROM (
