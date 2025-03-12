@@ -8,8 +8,13 @@ import { v4 as uuidv4 } from 'uuid';
 export const accountService = {
     async login({ email, password }) {
         try {
-            const sql = 'SELECT * FROM account WHERE email = ?';
-            const users = await db.query(sql, [email]);
+            const users = await db.query(
+                `SELECT *
+                 FROM account
+                 JOIN role ON account.role_id = role.role_id
+                 WHERE email = ?`,
+                [email]
+            );
             const user = users[0];
 
             if (!user) {
@@ -24,7 +29,7 @@ export const accountService = {
 
             const payload = {
                 account_id: user.account_id,
-                role_id: user.role_id,
+                role_name: user.role_name,
                 jti: uuidv4()
             }
             const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -58,94 +63,60 @@ export const accountService = {
         }
     },
 
-    async getAllAccounts() {
+    async getAccountQuery(account_id = null) {
         try {
+            let whereClause = ''
+            let queryParams = []
+
+            if (account_id != null) {
+                whereClause = 'WHERE acc.account_id = ?'
+                queryParams = [account_id]
+            }
+
             const accounts = await db.query(
-                `SELECT *
-                 FROM account
-                 JOIN role ON account.role_id = role.role_id
-                 JOIN membership_type ON account.membership_id = membership_type.membership_id`
+                `SELECT
+                    acc.account_id,
+                    acc.full_name,
+                    acc.gender,
+                    acc.birthday,
+                    acc.id_number,
+                    acc.phone_number,
+                    acc.email,
+                    JSON_OBJECT(
+                        'role_id', r.role_id,
+                        'role_name', r.role_name
+                    ) AS role,
+                    'membership_type', JSON_OBJECT(
+                        'membership_id', mt.membership_id,
+                        'membership_name', mt.membership_name,
+                        'discount_rate', mt.discount_rate
+                    ) AS membership_type
+                 FROM account acc
+                 JOIN role r ON acc.role_id = r.role_id
+                 JOIN membership_type mt ON acc.membership_id = mt.membership_id
+                 ${whereClause}`, queryParams
             )
 
-            return accounts.map(account => ({
-                account_id: account.account_id,
-                full_name: account.full_name,
-                gender: account.gender,
-                birthday: account.birthday,
-                id_number: account.id_number,
-                phone_number: account.phone_number,
-                email: account.email,
-                role: {
-                    role_id: account.role_id,
-                    role_name: account.role_name,
-                },
-                membership_type: {
-                    membership_id: account.membership_id,
-                    membership_name: account.membership_name,
-                    discount_rate: account.discount_rate,
-                },
-            }));
+            return accounts
         }
         catch (error) {
-            console.error("Error getting all accounts:", error);
+            console.error("Error getting account query:", error);
             throw error;
         }
+    },
+
+    async getAllAccounts() {
+        return await this.getAccountQuery()
     },
 
     async getAccountById (account_id) {
-        try {
-            const accounts = await db.query(
-                `SELECT *
-                 FROM account
-                 JOIN role ON account.role_id = role.role_id
-                 JOIN membership_type ON account.membership_id = membership_type.membership_id
-                 WHERE account_id = ?`, [account_id]
-            )
-
-            const account = accounts[0]
-            
-            return {
-                account_id: account.account_id,
-                full_name: account.full_name,
-                gender: account.gender,
-                birthday: account.birthday,
-                id_number: account.id_number,
-                phone_number: account.phone_number,
-                email: account.email,
-                role: {
-                    role_id: account.role_id,
-                    role_name: account.role_name,
-                },
-                membership_type: {
-                    membership_id: account.membership_id,
-                    membership_name: account.membership_name,
-                    discount_rate: account.discount_rate,
-                },
-            };
-        }
-        catch (error) {
-            console.error(`Error getting account by id ${account_id}:`, error)
-            throw error
-        }
+        const accounts = await this.getAccountQuery(account_id)
+        return accounts[0]
     },
 
     async updateAccount(account_id, accountData) {
-        try {
-            const { full_name, gender, birthday, id_number, phone_number, email } = accountData
-            await db.query(
-                `UPDATE account
-                 SET full_name = ?, gender = ?, birthday = ?, id_number = ?, phone_number = ?, email = ?
-                 WHERE account_id = ?`,
-                [full_name, gender, birthday, id_number, phone_number, email, account_id]
-            )
-
-            const updatedAccount = await this.getAccountById(account_id)
-            return updatedAccount
-        }
-        catch (error) {
-            console.error("Error updating account:", error);
-            throw error;
-        }
+        const accounts = await this.getAccountQuery(account_id)
+        return accounts[0]
     },
 
     async deleteAccount(account_id) {

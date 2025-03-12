@@ -1,15 +1,34 @@
 import { NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
 
-async function verifyToken(token) {
+async function verifyToken(token, secret) {
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
+    return payload;
+}
+
+async function authenticateToken(token) {
     if (!token) {
         return { isValid: false, error: 'No token provided' };
     }
     
-    return { isValid: true };
+    try {
+        const decoded = await verifyToken(token, process.env.JWT_SECRET);
+        return { isValid: true, account_id: decoded.account_id, role_name: decoded.role_name };
+    }
+    catch (error) {
+        console.error('Token Error:', error);
+        return { isValid: false, error: 'Invalid token' };
+    }
 }
 
 export async function middleware(request) {
     const path = request.nextUrl.pathname;
+
+    const allowedUserPermissionsRoutes = [
+        {route: '/api/accounts/', methods: ['GET', 'PUT']},
+        {route: '/api/accounts/change-password', methods: ['POST']},
+        {route: '/api/bookings/create', methods: ['POST']}
+    ];
 
     const publicRoutes = [
         '/api/public',
@@ -36,7 +55,7 @@ export async function middleware(request) {
         const authorizationHeader = request.headers.get('Authorization');
         const token = authorizationHeader?.split(' ')[1];
 
-        const verificationResult = await verifyToken(token);
+        const verificationResult = await authenticateToken(token);
 
         if (!verificationResult.isValid) {
             return NextResponse.json(
@@ -45,8 +64,24 @@ export async function middleware(request) {
             );
         }
 
+        if (verificationResult.role_name === 'user'){
+            const allowedRoute = allowedUserPermissionsRoutes.find(
+                route => path.startsWith(route.route) &&
+                route.methods.includes(request.method)
+            );
+            
+            if (path === '/api/accounts/getAll' || !allowedRoute) {
+                return NextResponse.json(
+                    { message: "Unauthorized", error: "Insufficient permissions" },
+                    { status: 403 }
+                )
+            }
+        }
+
         const requestHeaders = new Headers(request.headers);
         requestHeaders.set('x-auth-token', authorizationHeader);
+        requestHeaders.set('x-account-id', verificationResult.account_id);
+        requestHeaders.set('x-role-name', verificationResult.role_name);
 
         return NextResponse.next({
             request: { headers: requestHeaders },
@@ -57,6 +92,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-    matcher: '/api/:path*',
-    runtime: 'nodejs'
+    matcher: '/api/:path*'
 };

@@ -16,7 +16,7 @@ export async function GET(request, {params}) {
 
         const account = await services.accountService.accountController.default.getAccountById(account_id)
 
-        if (!responseAccounts) {
+        if (!account) {
             return NextResponse.json({ message: "Account not found" }, { status: 404 })
         }
 
