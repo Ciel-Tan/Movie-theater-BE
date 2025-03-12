@@ -1,11 +1,9 @@
-// src/middleware.js (or middleware.ts)
 import { NextResponse } from 'next/server';
 
 async function verifyToken(token) {
     if (!token) {
         return { isValid: false, error: 'No token provided' };
     }
-
     return { isValid: true };
 }
 
@@ -18,14 +16,25 @@ export async function middleware(request) {
         '/api/accounts/forgot-password',
     ];
 
+    // Allow public routes to pass through
     if (publicRoutes.includes(path) || publicRoutes.some(route => path.startsWith(route))) {
         return NextResponse.next();
     }
 
     if (path.startsWith('/api')) {
-        console.log([...request.headers.entries()]);
-        console.log(request.headers.get('Authorization'));
-        console.log(request.headers.get('authorization'));
+        // Handle OPTIONS preflight requests
+        if (request.method === 'OPTIONS') {
+            return new NextResponse(null, {
+                status: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+                    'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+                },
+            });
+        }
+
+        // Authentication for other methods
         const authorizationHeader = request.headers.get('Authorization');
         const token = authorizationHeader?.split(' ')[1];
 
