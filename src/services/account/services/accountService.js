@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { sendEmail } from '@/src/lib/emailService';
 import crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 
 export const accountService = {
     async login({ email, password }) {
@@ -21,20 +22,14 @@ export const accountService = {
                 return { message: 'Incorrect password' };
             }
 
-            const expiresIn = 3600
-            const token = jwt.sign(
-                {
-                    account_id: user.account_id,
-                    role_id: user.role_id,
-                    email: user.email,
-                },
-                process.env.JWT_SECRET,
-                { expiresIn: expiresIn }
-            );
-            return {
-                token,
-                expiresIn: expiresIn
+            const payload = {
+                account_id: user.account_id,
+                role_id: user.role_id,
+                jti: uuidv4()
             }
+            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+            return { token, expiresIn: 3600 }
         }
         catch (error) {
             console.error("Error logging in:", error);
