@@ -77,15 +77,6 @@ export async function middleware(request) {
                 )
             }
         }
-
-        const requestHeaders = new Headers(request.headers);
-        requestHeaders.set('x-auth-token', authorizationHeader);
-        requestHeaders.set('x-account-id', verificationResult.account_id);
-        requestHeaders.set('x-role-name', verificationResult.role_name);
-
-        return NextResponse.next({
-            request: { headers: requestHeaders },
-        });
     }
 
     return NextResponse.next();
