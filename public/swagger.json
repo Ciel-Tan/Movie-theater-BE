@@ -209,6 +209,9 @@
       "MovieRequestBody": {
         "type": "object",
         "properties": {
+          "title": {
+            "type": "string"
+          },
           "poster_image": {
             "type": "string"
           },
@@ -226,7 +229,7 @@
           },
           "release_date": {
             "type": "string",
-            "format": "date-time"
+            "format": "date"
           },
           "trailer_link": {
             "type": "string"
@@ -245,8 +248,16 @@
               }
             }
           },
-          "director_id": {
-            "type": "integer"
+          "director": {
+            "type": "object",
+            "properties": {
+              "director_id": {
+                "type": "integer"
+              },
+              "director_name": {
+                "type": "string"
+              }
+            }
           },
           "actors": {
             "type": "array",
@@ -266,6 +277,21 @@
               "properties": {
                 "showtime_id": {
                   "type": "integer"
+                },
+                "room": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "room_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "show_datetime": {
+                  "type": "string",
+                  "format": "date-time"
                 }
               }
             }

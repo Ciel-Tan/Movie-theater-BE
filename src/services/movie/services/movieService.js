@@ -154,19 +154,34 @@ export const movieService = {
             const {
                 poster_image, title, description, age_rating,
                 run_time,
-                release_date, trailer_link, language, director_id,
+                release_date, trailer_link, language, director,
             } = movieData
+
+            const existingDirector = await db.query(
+                `SELECT * FROM director WHERE director_name = ?`,
+                [director.director_name]
+            )
+
+            console.log(existingDirector)
+
+            if (existingDirector.length === 0) {
+                const newDirector = await db.query(
+                    `INSERT INTO director SET director_name = ?`,
+                    [director.director_name]
+                )
+                director.director_id = newDirector.insertId
+            }
 
             // Update the movie
             await db.query(
                 `UPDATE movie SET
                  poster_image = ?, title = ?, description = ?, age_rating = ?, 
                  run_time = ?, 
-                 release_date = ?, trailer_link = ?, language = ? director_id = ?
+                 release_date = ?, trailer_link = ?, language = ?, director_id = ?
                  WHERE movie_id = ?`,
                 [
                     poster_image, title, description, age_rating, run_time,
-                    release_date, trailer_link, language, director_id, movie_id
+                    release_date, trailer_link, language, director.director_id, movie_id
                 ]
             )
         }
@@ -179,13 +194,16 @@ export const movieService = {
     async updateMovieRelationships(movie_id, list_ids, table, column) {
         try {
             if (list_ids && list_ids.length > 0) {
-                const existingRelated = await db.query(`SELECT ${column} FROM ${table} WHERE movie_id = ?`, [movie_id]);
-                
+                const newIds = list_ids.map(item => (typeof item === 'object' ? item[column] : item));
+
+                const existingRelated = await db.query(
+                    `SELECT ${column} FROM ${table} WHERE movie_id = ?`,
+                    [movie_id]
+                );
                 const existingRelatedIds = existingRelated.map(row => row[column]);
 
-                const relatedToRemove = existingRelatedIds.filter(existingId => !list_ids.includes(existingId));
-
-                const relatedToAdd = list_ids.filter(newId => !existingRelatedIds.includes(newId));
+                const relatedToRemove = existingRelatedIds.filter(existingId => !newIds.includes(existingId));
+                const relatedToAdd = newIds.filter(newId => !existingRelatedIds.includes(newId));
 
                 if (relatedToRemove.length > 0) {
                     await db.query(
@@ -195,11 +213,16 @@ export const movieService = {
                 }
 
                 if (relatedToAdd.length > 0) {
+                    // Dynamically create placeholders for bulk insert
                     const values = relatedToAdd.map(relatedId => [movie_id, relatedId]);
-                    await db.query(`INSERT INTO ${table} (movie_id, ${column}) VALUES ?`, [values]);
+                    const placeholders = values.map(() => "(?, ?)").join(", ");
+                    const flatValues = values.flat();
+                    const sql = `INSERT INTO ${table} (movie_id, ${column}) VALUES ${placeholders}`;
+                    await db.query(sql, flatValues);
                 }
+            } else {
+                await db.query(`DELETE FROM ${table} WHERE movie_id = ?`, [movie_id]);
             }
-            else await db.query(`DELETE FROM ${table} WHERE movie_id = ?`, [movie_id]);
         }
         catch (error) {
             console.error("Error updating movie relationships in database:", error);
@@ -209,15 +232,27 @@ export const movieService = {
 
     async updateMovieShowtime(movie_id, showtime) {
         try {
-            await db.query(`DELETE FROM showtime WHERE movie_id = ?`, [movie_id]);
+            const existingShowtime = await db.query(
+                `SELECT showtime_id FROM showtime WHERE movie_id = ?`,
+                [movie_id]
+            );
+            const existingIds = existingShowtime.map(row => row.showtime_id);
 
-            if (showtime && showtime.length > 0) {
-                const values = showtime.map(st => [
-                    movie_id,
-                    st.room_id,
-                    st.show_datetime,
-                ]);
-                await db.query(`INSERT INTO showtime (movie_id, room_id, show_datetime) VALUES ?`, [values]);
+            for (const st of showtime) {
+                if (st.showtime_id && existingIds.includes(st.showtime_id)) {
+                    await db.query(
+                        `UPDATE showtime 
+                         SET room_id = ?, show_datetime = ?
+                         WHERE showtime_id = ? AND movie_id = ?`,
+                        [st.room.room_id, st.show_datetime, st.showtime_id, movie_id]
+                    );
+                } else {
+                    await db.query(
+                        `INSERT INTO showtime (movie_id, room_id, show_datetime) 
+                         VALUES (?, ?, ?)`,
+                        [movie_id, st.room.room_id, st.show_datetime]
+                    );
+                }
             }
         }
         catch (error) {
@@ -230,10 +265,10 @@ export const movieService = {
         try {
             const { genres, actors, showtime, ...rest } = movieData;
             
-            await this.updateMovieTable(movie_id, rest);
+            await this.updateMovieShowtime(movie_id, showtime)
             await this.updateMovieRelationships(movie_id, genres, 'movie_genre', 'genre_id');
             await this.updateMovieRelationships(movie_id, actors, 'movie_actor', 'actor_id');
-            await this.updateMovieShowtime(movie_id, showtime)
+            await this.updateMovieTable(movie_id, rest);
 
             const movie = await this.getMovieById(movie_id)
             return movie
