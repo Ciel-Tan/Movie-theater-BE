@@ -6,12 +6,12 @@ export async function POST(request, { params }) {
         const movieData = await request.json();
         const {
             poster_image, title, description, age_rating, run_time,
-            release_date, trailer_link, language, director_id,
+            release_date, trailer_link, language, director
         } = movieData
 
         if (
             !poster_image || !title || !description || !age_rating || !run_time || 
-            !release_date || !trailer_link || !language || !director_id
+            !release_date || !trailer_link || !language || !director
         ) {
             return NextResponse.json({ message: "All fields are required" }, { status: 400 })
         }
