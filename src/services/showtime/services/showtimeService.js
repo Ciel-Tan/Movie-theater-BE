@@ -1,39 +1,93 @@
 import db from "../../../../db";
 
 export const showtimeService = {
-    async getAllShowtime() {
+    async getShowtimeQuery(showtime_id = null) {
         try {
-            const showtime = await db.query(`SELECT * FROM showtime`);
-            return showtime;
+            let whereClause = ''
+            let queryParams = []
+
+            if (showtime_id != null) {
+                whereClause = 'Where st.showtime_id = ?'
+                queryParams = [showtime_id]
+            }
+
+            const showtime = await db.query(
+                `SELECT
+                    st.showtime_id,
+
+                    JSON_OBJECT(
+                        'movie_id', m.movie_id,
+                        'poster_image', m.poster_image,
+                        'poster_url', m.poster_url,
+                        'title', m.title,
+                        'description', m.description,
+                        'age_rating', m.age_rating,
+                        'run_time', m.run_time,
+                        'release_date', m.release_date,
+                        'trailer_link', m.trailer_link,
+                        'language', m.language,
+                        'director_id', m.director_id
+                    ) AS movie,
+
+                    JSON_OBJECT(
+                        'room_id', r.room_id,
+                        'room_name', r.room_name
+                    ) AS room,
+                    
+                    DATE_FORMAT(st.show_datetime, '%Y-%m-%d %H:%i:%s.000000') AS show_datetime
+                 FROM showtime st
+                 JOIN movie m ON st.movie_id = m.movie_id
+                 JOIN room r ON st.room_id = r.room_id
+                 ${whereClause}`, queryParams
+            );
+
+            return showtime
         }
         catch (error) {
-            console.error('Error getting all showtime from database:', error);
+            console.error('Error getting showtime from database:', error);
             throw error;
         }
+    },
+
+    async getAllShowtime() {
+        return await this.getShowtimeQuery()
     },
 
     async getShowtimeById(showtime_id) {
+        const showtime = await this.getShowtimeQuery(showtime_id)
+        return showtime[0]
+    },
+
+    async createMovieShowtime(movieData) {
+        const { title } = movieData;
         try {
-            const showtime = await db.query(`SELECT * FROM showtime WHERE showtime_id = ?`, [showtime_id]);
-            return showtime[0];
+            const existingMovie = await db.query(
+                `SELECT movie_id FROM movie WHERE title = ?`,
+                [title],
+            );
+
+            if (existingMovie.length > 0) {
+                return existingMovie[0].movie_id
+            }
+
+            const movie = await db.query(`INSERT INTO movie SET title = ?`, [title]);
+            return movie.insertId
         }
         catch (error) {
-            console.error('Error getting showtime by id from database:', error);
+            console.error('Error creating movie from database:', error);
             throw error;
         }
     },
 
-    async createShowtime(showtimeData) {
-        const { movie_id, room_id, show_datetime } = showtimeData;
+    async createShowtimeTable(movie_id, room_id, show_datetime) {
         try {
             const showtime = await db.query(
                 `INSERT INTO showtime SET
-                movie_id = ?, room_id = ?, show_datetime = ?`,
+                 movie_id = ?, room_id = ?, show_datetime = ?`,
                 [movie_id, room_id, show_datetime.slice(0, 19).replace('T', ' ')],
             );
             
-            const newShowtime = await this.getShowtimeById(showtime.insertId);
-            return newShowtime
+            return showtime.insertId
         }
         catch (error) {
             console.error('Error creating showtime from database:', error);
@@ -41,23 +95,73 @@ export const showtimeService = {
         }
     },
 
-    async updateShowtime(showtime_id, showtimeData) {
-        const { movie_id, room_id, show_datetime } = showtimeData;
+    async createShowtime(showtimeData) {
+        const { movie, room, show_datetime } = showtimeData;
+
+        const movie_id = await this.createMovieShowtime(movie)
+        const showtime_id = await this.createShowtimeTable(movie_id, room.room_id, show_datetime)
+
+        return await this.getShowtimeById(showtime_id)
+    },
+
+    async updateMovie(movieData) {
+        const { movie_id, title } = movieData;
+        
+        try {
+            await db.query(
+                `UPDATE movie SET
+                 title = ?
+                 WHERE movie_id = ?`,
+                [title, movie_id],
+            );
+        }
+        catch (error) {
+            console.error('Error updating movie from database:', error);
+            throw error;
+        }
+    },
+
+    async updateRoom(showtime_id, roomData) {
+        const { room_id } = roomData;
+        
         try {
             await db.query(
                 `UPDATE showtime SET
-                movie_id = ?, room_id = ?, show_datetime = ?
-                WHERE showtime_id = ?`,
-                [movie_id, room_id, show_datetime, showtime_id],
+                 room_id = ?
+                 WHERE showtime_id = ?`,
+                [room_id, showtime_id],
             );
-            
-            const updatedShowtime = await this.getShowtimeById(showtime_id);
-            return updatedShowtime
+        }
+        catch (error) {
+            console.error('Error updating room from database:', error);
+            throw error;
+        }
+    },
+
+    async updateShowtimeTable(showtime_id, show_datetime) {
+        try {
+            await db.query(
+                `UPDATE showtime SET
+                 show_datetime = ?
+                 WHERE showtime_id = ?`,
+                [show_datetime, showtime_id],
+            );
         }
         catch (error) {
             console.error('Error updating showtime from database:', error);
             throw error;
         }
+    },
+
+    async updateShowtime(showtime_id, showtimeData) {
+        const { movie, room, show_datetime } = showtimeData;
+
+        await this.updateMovie(movie);
+        await this.updateRoom(showtime_id, room);
+        await this.updateShowtimeTable(showtime_id, show_datetime);
+
+        const updatedShowtime = await this.getShowtimeById(showtime_id);
+        return updatedShowtime
     },
 
     async deleteShowtime(showtime_id) {

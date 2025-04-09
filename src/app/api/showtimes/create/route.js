@@ -3,14 +3,8 @@ import { NextResponse } from "next/server";
 
 export async function POST(request, { params }) {
     try {
-        const { movie_id, room_id, show_datetime } = await request.json();
-
-        if (!movie_id || !room_id || !show_datetime) {
-            return NextResponse.json({ message: "All fields are required" }, { status: 400 })
-        }
-
-        const newShowtime = await services.showtimeService.showtimeController.default.createShowtime({ movie_id, room_id, show_datetime });
-
+        const showtimeData = await request.json();
+        const newShowtime = await services.showtimeService.showtimeController.default.createShowtime(showtimeData);
         return NextResponse.json(newShowtime, { status: 201 })
     }
     catch (error) {
