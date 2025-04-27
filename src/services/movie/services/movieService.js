@@ -65,7 +65,8 @@ export const movieService = {
                 FROM movie m
                 LEFT JOIN director d ON m.director_id = d.director_id
                 ${whereClause}
-                GROUP BY m.movie_id, d.director_id, d.director_name`,
+                GROUP BY m.movie_id, d.director_id, d.director_name
+                ORDER BY m.movie_id DESC`,
                 queryParams
             );
 
@@ -128,15 +129,41 @@ export const movieService = {
         }
     },
 
-    async createMovieRelationships(movie_id, list_ids, table, column) {
+    async createMovieRelationships(movie_id, list_items, table, column) {
+        if (!Array.isArray(list_items) || list_items.length === 0) {
+            return;
+        }
+
         try {
-            if (list_ids && Array.isArray(list_ids) && list_ids.length > 0) {
-                for (const item of list_ids) {
-                    await db.query(
-                        `INSERT INTO ${table} SET movie_id = ?, ${column} = ?`, 
-                        [movie_id, item[column]]
-                    );
-                }
+            let values = [];
+
+            if (table === 'movie_actor') {
+                const names = Array.from(new Set(list_items.map(i => i.actor_name)));
+                const placeholders = names.map(() => '(?)').join(', ');
+                await db.query(
+                    `INSERT IGNORE INTO actor (actor_name) VALUES ${placeholders}`,
+                     names
+                );
+
+                const placeholder = names.map(() => '?').join(', ');
+                const rows = await db.query(
+                    `SELECT actor_id, actor_name FROM actor WHERE actor_name IN (${placeholder})`,
+                    names
+                );
+
+                const actorMapping = new Map(rows.map(row => [row.actor_name, row.actor_id]));
+                values = list_items.map(item => [movie_id, actorMapping.get(item.actor_name)]);
+            }
+            else {
+                values = list_items.map(item => [movie_id, item[column]]);
+            }
+
+            if (values.length > 0) {
+                const placeholders = values.map(() => '(?, ?)').join(', ');
+                await db.query(
+                    `INSERT IGNORE INTO ${table} (movie_id, ${column}) VALUES ${placeholders}`,
+                    values.flat()
+                );
             }
         }
         catch (error) {
@@ -222,41 +249,18 @@ export const movieService = {
         }
     },
 
-    async updateMovieRelationships(movie_id, list_ids, table, column) {
+    async updateMovieRelationships(movie_id, listItems, table, column) {
+        await db.query(`DELETE FROM ${table} WHERE movie_id = ?`, [movie_id]);
+
+        if (!listItems || listItems.length === 0) {
+            return;
+        }
+        
         try {
-            if (list_ids && list_ids.length > 0) {
-                const newIds = list_ids.map(item => (typeof item === 'object' ? item[column] : item));
-
-                const existingRelated = await db.query(
-                    `SELECT ${column} FROM ${table} WHERE movie_id = ?`,
-                    [movie_id]
-                );
-                const existingRelatedIds = existingRelated.map(row => row[column]);
-
-                const relatedToRemove = existingRelatedIds.filter(existingId => !newIds.includes(existingId));
-                const relatedToAdd = newIds.filter(newId => !existingRelatedIds.includes(newId));
-
-                if (relatedToRemove.length > 0) {
-                    await db.query(
-                        `DELETE FROM ${table} WHERE movie_id = ? AND ${column} IN (?)`,
-                        [movie_id, relatedToRemove]
-                    );
-                }
-
-                if (relatedToAdd.length > 0) {
-                    const values = relatedToAdd.map(relatedId => [movie_id, relatedId]);
-                    const placeholders = values.map(() => "(?, ?)").join(", ");
-                    const flatValues = values.flat();
-                    const sql = `INSERT INTO ${table} (movie_id, ${column}) VALUES ${placeholders}`;
-                    await db.query(sql, flatValues);
-                }
-            }
-            else {
-                await db.query(`DELETE FROM ${table} WHERE movie_id = ?`, [movie_id]);
-            }
+            await this.createMovieRelationships(movie_id, listItems, table, column);
         }
         catch (error) {
-            console.error("Error updating movie relationships in database:", error);
+            console.error('Error updating movie relationships in database:', error);
             throw error;
         }
     },
