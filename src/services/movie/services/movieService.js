@@ -93,10 +93,18 @@ export const movieService = {
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
             const movies = await db.query(
-                `SELECT *
-                 FROM movie
-                 WHERE release_date <= CURRENT_DATE() AND release_date >= ?
-                 ORDER BY release_date DESC`,
+                `SELECT m.movie_id, m.title, m.poster_image, m.poster_url, m.description,
+                 m.age_rating, m.run_time, m.release_date, m.trailer_link, m.language,
+
+                 JSON_OBJECT(
+                    'director_id', d.director_id,
+                    'director_name', d.director_name
+                 ) AS director
+
+                 FROM movie m
+                 LEFT JOIN director d ON m.director_id = d.director_id
+                 WHERE m.release_date <= CURRENT_DATE() AND m.release_date >= ?
+                 ORDER BY m.release_date DESC`,
                 [thirtyDaysAgo]
             )
             return movies
@@ -113,10 +121,18 @@ export const movieService = {
         
         try {
             const movies = await db.query(
-                `SELECT *
-                 FROM movie
-                 WHERE release_date > CURRENT_DATE() AND release_date <= ?
-                 ORDER BY release_date ASC`,
+                `SELECT m.movie_id, m.title, m.poster_image, m.poster_url, m.description,
+                 m.age_rating, m.run_time, m.release_date, m.trailer_link, m.language,
+
+                 JSON_OBJECT(
+                    'director_id', d.director_id,
+                    'director_name', d.director_name
+                 ) AS director
+                
+                 FROM movie m
+                 LEFT JOIN director d ON m.director_id = d.director_id
+                 WHERE m.release_date > CURRENT_DATE() AND m.release_date <= ?
+                 ORDER BY m.release_date ASC`,
                  [thirtyDaysLater]
             )
             return movies
