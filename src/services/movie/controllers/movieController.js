@@ -24,6 +24,28 @@ const movieController = {
         }
     },
 
+    async getMovieNowShowing() {
+        try {
+            const movies = await movieService.getMovieNowShowing();
+            return movies;
+        }
+        catch (error) {
+            console.error("Error fetching now showing movies:", error);
+            throw error;
+        }
+    },
+
+    async getMovieComingSoon() {
+        try {
+            const movies = await movieService.getMovieComingSoon();
+            return movies;
+        }
+        catch (error) {
+            console.error("Error fetching coming soon movies:", error);
+            throw error;
+        }
+    },
+
     async createMovie(movieData) {
         try {
             const movie = await movieService.createMovie(movieData);

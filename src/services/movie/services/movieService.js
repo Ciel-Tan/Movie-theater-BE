@@ -87,6 +87,46 @@ export const movieService = {
         return movies[0]
     },
 
+    async getMovieNowShowing() {
+        try {
+            const thirtyDaysAgo = new Date()
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+            const movies = await db.query(
+                `SELECT *
+                 FROM movie
+                 WHERE release_date <= CURRENT_DATE() AND release_date >= ?
+                 ORDER BY release_date DESC`,
+                [thirtyDaysAgo]
+            )
+            return movies
+        }
+        catch (error) {
+            console.error("Error executing query get movie now showing in database:", error)
+            throw error
+        }
+    },
+
+    async getMovieComingSoon() {
+        const thirtyDaysLater = new Date()
+        thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30)
+        
+        try {
+            const movies = await db.query(
+                `SELECT *
+                 FROM movie
+                 WHERE release_date > CURRENT_DATE() AND release_date <= ?
+                 ORDER BY release_date ASC`,
+                 [thirtyDaysLater]
+            )
+            return movies
+        }
+        catch (error) {
+            console.error("Error executing query get movie coming soon in database:", error)
+            throw error
+        }
+    },
+
     async createMovieTable(movieData) {
         try {
             const {

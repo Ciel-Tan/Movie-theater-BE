@@ -622,6 +622,44 @@
         }
       }
     },
+    "/api/public/movies/now-showing": {
+      "get": {
+        "tags": ["Movie Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Movie"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public/movies/coming-soon": {
+      "get": {
+        "tags": ["Movie Controller"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Movie"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/movies/{movie_id}": {
       "put": {
         "tags": ["Movie Controller"],
