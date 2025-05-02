@@ -1659,7 +1659,7 @@
         }
       }
     },
-    "/api/genres/getAll": {
+    "/api/public/genres/getAll": {
       "get": {
         "tags": ["Genre Controller"],
         "security": [

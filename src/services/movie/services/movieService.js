@@ -99,7 +99,19 @@ export const movieService = {
                  JSON_OBJECT(
                     'director_id', d.director_id,
                     'director_name', d.director_name
-                 ) AS director
+                 ) AS director,
+
+                 (SELECT JSON_ARRAYAGG(genre_json)
+                    FROM (
+                        SELECT DISTINCT JSON_OBJECT(
+                            'genre_id', g_sub.genre_id,
+                            'genre_name', g_sub.genre_name
+                        ) AS genre_json
+                        FROM movie_genre mg_sub
+                        JOIN genre g_sub ON mg_sub.genre_id = g_sub.genre_id
+                        WHERE mg_sub.movie_id = m.movie_id
+                    ) AS distinct_genres
+                 ) AS genres
 
                  FROM movie m
                  LEFT JOIN director d ON m.director_id = d.director_id
@@ -127,7 +139,19 @@ export const movieService = {
                  JSON_OBJECT(
                     'director_id', d.director_id,
                     'director_name', d.director_name
-                 ) AS director
+                 ) AS director,
+
+                 (SELECT JSON_ARRAYAGG(genre_json)
+                    FROM (
+                        SELECT DISTINCT JSON_OBJECT(
+                            'genre_id', g_sub.genre_id,
+                            'genre_name', g_sub.genre_name
+                        ) AS genre_json
+                        FROM movie_genre mg_sub
+                        JOIN genre g_sub ON mg_sub.genre_id = g_sub.genre_id
+                        WHERE mg_sub.movie_id = m.movie_id
+                    ) AS distinct_genres
+                 ) AS genres
                 
                  FROM movie m
                  LEFT JOIN director d ON m.director_id = d.director_id
