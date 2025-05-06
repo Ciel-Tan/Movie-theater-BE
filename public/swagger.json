@@ -52,19 +52,47 @@
           }
         }
       },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "address_id": {
+            "type": "integer"
+          },
+          "address_name": {
+            "type": "string"
+          }
+        }
+      },
+      "Cinema": {
+        "type": "object",
+        "properties": {
+          "cinema_id": {
+            "type": "integer"
+          },
+          "cinema_name": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          }
+        }
+      },
       "ShowtimeMovie": {
         "type": "object",
         "properties": {
           "showtime_id": {
             "type": "integer"
           },
+          "cinema": {
+            "$ref": "#/components/schemas/Cinema"
+          },
+          "room": {
+            "$ref": "#/components/schemas/Room"
+          },
           "show_datetime": {
             "type": "string",
             "format": "date",
             "example": "2023-01-01T00:00:00.000Z"
-          },
-          "room": {
-            "$ref": "#/components/schemas/Room"
           }
         }
       },

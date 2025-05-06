@@ -16,6 +16,15 @@ export const showtimeService = {
                     st.showtime_id,
 
                     JSON_OBJECT(
+                        'cinema_id', c.cinema_id,
+                        'cinema_name', c.cinema_name,
+                        'address', JSON_OBJECT(
+                            'address_id', a.address_id,
+                            'address_name', a.address_name
+                        )
+                    ) AS cinema,
+                    
+                    JSON_OBJECT(
                         'movie_id', m.movie_id,
                         'poster_image', m.poster_image,
                         'poster_url', m.poster_url,
@@ -38,6 +47,8 @@ export const showtimeService = {
                  FROM showtime st
                  JOIN movie m ON st.movie_id = m.movie_id
                  JOIN room r ON st.room_id = r.room_id
+                 JOIN cinema c ON st.cinema_id = c.cinema_id
+                 JOIN address a ON c.address_id = a.address_id
                  ${whereClause}`, queryParams
             );
 
@@ -166,6 +177,7 @@ export const showtimeService = {
 
     async deleteShowtime(showtime_id) {
         try {
+            await db.query(`DELETE FROM booking WHERE showtime_id = ?`, [showtime_id])
             const result = await db.query(`DELETE FROM showtime WHERE showtime_id = ?`, [showtime_id])
             return result.affectedRows
         }

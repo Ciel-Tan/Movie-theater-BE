@@ -50,6 +50,14 @@ export const movieService = {
                     FROM (
                         SELECT DISTINCT JSON_OBJECT(
                             'showtime_id', st_sub.showtime_id,
+                            'cinema', JSON_OBJECT(
+                                'cinema_id', c_sub.cinema_id,
+                                'cinema_name', c_sub.cinema_name,
+                                'address', JSON_OBJECT(
+                                    'address_id', ad_sub.address_id,
+                                    'address_name', ad_sub.address_name
+                                )
+                            ),
                             'room', JSON_OBJECT(
                                 'room_id', r_sub.room_id,
                                 'room_name', r_sub.room_name
@@ -58,6 +66,8 @@ export const movieService = {
                         ) AS showtime_json
                         FROM showtime st_sub
                         JOIN room r_sub ON st_sub.room_id = r_sub.room_id
+                        JOIN cinema c_sub ON st_sub.cinema_id = c_sub.cinema_id
+                        JOIN address ad_sub ON c_sub.address_id = ad_sub.address_id
                         WHERE st_sub.movie_id = m.movie_id
                     ) AS distinct_showtime
                     ) AS showtime
@@ -253,15 +263,13 @@ export const movieService = {
     },
 
     async createMovieShowtime(movie_id, showtime) {
-        try {
-            if (!showtime || showtime.length === 0) {
-                return;
-            }
+        if (!showtime || showtime.length === 0) return;
 
+        try {
             for (const show of showtime) {
                 await db.query(
-                    `INSERT INTO showtime SET movie_id = ?, room_id = ?, show_datetime = ?`,
-                    [movie_id, show.room.room_id, show.show_datetime]
+                    `INSERT INTO showtime SET movie_id = ?, cinema_id = ?, room_id = ?, show_datetime = ?`,
+                     [movie_id, show.cinema.cinema_id, show.room.room_id, show.show_datetime]
                 );
             }
         }
@@ -382,18 +390,18 @@ export const movieService = {
             }
 
             if (showtimeToAdd.length > 0) {
-                const values = showtimeToAdd.map(st => [movie_id, st.room.room_id, st.show_datetime]);
-                const placeholders = values.map(() => "(?, ?, ?)").join(", ");
+                const values = showtimeToAdd.map(st => [movie_id, st.cinema.cinema_id, st.room.room_id, st.show_datetime]);
+                const placeholders = values.map(() => "(?, ?, ?, ?)").join(", ");
                 const flatValues = values.flat();
-                const sql = `INSERT INTO showtime (movie_id, room_id, show_datetime) VALUES ${placeholders}`;
+                const sql = `INSERT INTO showtime (movie_id, cinema_id, room_id, show_datetime) VALUES ${placeholders}`;
                 await db.query(sql, flatValues);
             }
 
             if (showtimeToUpdate.length > 0) {
                 const updatePromises = showtimeToUpdate.map(st => 
                     db.query(
-                        `UPDATE showtime SET room_id = ?, show_datetime = ? WHERE showtime_id = ? AND movie_id = ?`,
-                        [st.room.room_id, st.show_datetime, st.showtime_id, movie_id]
+                        `UPDATE showtime SET cinema_id = ?, room_id = ?, show_datetime = ? WHERE showtime_id = ? AND movie_id = ?`,
+                        [st.cinema.cinema_id, st.room.room_id, st.show_datetime, st.showtime_id, movie_id]
                     )
                 );
                 
