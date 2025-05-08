@@ -1,20 +1,28 @@
 import db from "../../../../db";
 
 export const bookingService = {
-    async getBookingQuery(booking_id = null) {
+    async getBookingQuery(booking_id = null, account_id = null) {
         try {
             let whereClause = '';
-            let queryParams = [];
+            const queryParams = [];
 
-            if (booking_id != null) {
+            if (booking_id !== null && account_id !== null) {
+                whereClause = 'WHERE b.booking_id = ? AND b.account_id = ?';
+                queryParams.push(booking_id, account_id);
+            }
+            else if (booking_id !== null) {
                 whereClause = 'WHERE b.booking_id = ?';
-                queryParams = [booking_id];
+                queryParams.push(booking_id);
+            }
+            else if (account_id !== null) {
+                whereClause = 'WHERE b.account_id = ?';
+                queryParams.push(account_id);
             }
 
             const bookings = await db.query(
                 `SELECT
                     b.booking_id,
-                    b.booking_datetime AS booking_show_datetime,
+                    b.booking_datetime AS booking_datetime,
                     b.booking_fee,
 
                     JSON_OBJECT(
@@ -61,24 +69,37 @@ export const bookingService = {
                         'show_datetime', st.show_datetime
                     ) AS showtime,
 
-                    JSON_OBJECT(
-                        'ticket_quantity', bt.ticket_quantity,
-                        'ticket', JSON_OBJECT(
-                            'ticket_id', t.ticket_id,
-                            'ticket_name', t.ticket_name,
-                            'ticket_price', t.ticket_price
+                    -- aggregate tickets
+                    (SELECT JSON_ARRAYAGG(
+                            JSON_OBJECT(
+                                'ticket_quantity', bt2.ticket_quantity,
+                                'ticket', JSON_OBJECT(
+                                    'ticket_id', t.ticket_id,
+                                    'ticket_name', t.ticket_name,
+                                    'ticket_price', t.ticket_price
+                                )
+                            )
                         )
+                    FROM booking_ticket bt2
+                    JOIN ticket t ON bt2.ticket_id = t.ticket_id
+                    WHERE bt2.booking_id = b.booking_id
                     ) AS booking_ticket,
 
-                    JSON_ARRAYAGG(
+                    -- aggregate seats
+                    (SELECT JSON_ARRAYAGG(
                         JSON_OBJECT(
                             'seat_id', s.seat_id,
                             'seat_location', s.seat_location,
                             'seat_type', JSON_OBJECT(
-                                'seat_type_id', st_type.seat_type_id,
-                                'seat_type_name', st_type.seat_type_name
+                                'seat_type_id', stt.seat_type_id,
+                                'seat_type_name', stt.seat_type_name
                             )
                         )
+                    )
+                    FROM booking_seat bs2
+                    JOIN seat s ON bs2.seat_id = s.seat_id
+                    JOIN seat_type stt ON s.seat_type_id = stt.seat_type_id
+                    WHERE bs2.booking_id = b.booking_id
                     ) AS booking_seat
 
                 FROM booking b
@@ -89,30 +110,16 @@ export const bookingService = {
                 LEFT JOIN movie m ON st.movie_id = m.movie_id
                 LEFT JOIN director d ON m.director_id = d.director_id
                 LEFT JOIN room rm ON st.room_id = rm.room_id
-                LEFT JOIN booking_ticket bt ON b.booking_id = bt.booking_id
-                LEFT JOIN ticket t ON bt.ticket_id = t.ticket_id
-                LEFT JOIN booking_seat bs ON b.booking_id = bs.booking_id
-                LEFT JOIN seat s ON bs.seat_id = s.seat_id
-                LEFT JOIN seat_type st_type ON s.seat_type_id = st_type.seat_type_id
                 ${whereClause}
-                GROUP BY b.booking_id, b.booking_datetime, b.booking_fee,
-                         acc.account_id, acc.full_name, acc.email, acc.gender, acc.birthday, acc.id_number, acc.phone_number,
-                         r.role_id, r.role_name,
-                         mt.membership_id, mt.membership_name, mt.discount_rate,
-                         st.showtime_id,
-                         m.movie_id, m.title, m.poster_image, m.poster_url, m.description, m.age_rating, m.run_time, m.release_date, m.trailer_link, m.language,
-                         d.director_id, d.director_name,
-                         rm.room_id, rm.room_name,
-                         bt.ticket_quantity,
-                         t.ticket_id, t.ticket_name, t.ticket_price`,
+                ORDER BY b.booking_datetime DESC;`,
                 queryParams
             );
 
-            return bookings
+            return bookings;
         }
         catch (error) {
-            console.error("Error executing query get booking query in database:", error)
-            throw error
+            console.error("Error executing query getBookingQuery:", error);
+            throw error;
         }
     },
 
@@ -121,8 +128,13 @@ export const bookingService = {
     },
 
     async getBookingById(booking_id) {
-        const bookings = await this.getBookingQuery(booking_id)
+        const bookings = await this.getBookingQuery(booking_id, null)
         return bookings[0];
+    },
+
+    async getBookingByAccountId(account_id) {
+        const bookings = await this.getBookingQuery(null, account_id)
+        return bookings;
     },
 
     async createBookingTable(bookingData) {
@@ -143,12 +155,20 @@ export const bookingService = {
     },
 
     async createBookingTicket(booking_id, booking_ticket) {
-        const { ticket_quantity, ticket_id } = booking_ticket
+        if (!Array.isArray(booking_ticket) || booking_ticket.length === 0) {
+            return;
+        }
+
+        const placeholders = booking_ticket.map(() => '(?, ?, ?)').join(', ');
+        const values = booking_ticket.reduce((arr, { ticket_id, ticket_quantity }) => {
+            arr.push(booking_id, ticket_id, ticket_quantity);
+            return arr;
+        }, []);
+
         try {
             await db.query(
-                `INSERT INTO booking_ticket SET
-                 booking_id = ?, ticket_id = ?, ticket_quantity = ?`,
-                [booking_id, ticket_id, ticket_quantity],
+                `INSERT INTO booking_ticket (booking_id, ticket_id, ticket_quantity) VALUES ${placeholders}`,
+                values,
             )
         }
         catch (error) {
@@ -206,13 +226,21 @@ export const bookingService = {
     },
 
     async updateBookingTicket(booking_id, booking_ticket) {
-        const { ticket_quantity, ticket_id } = booking_ticket
+        if (!Array.isArray(booking_ticket) || booking_ticket.length === 0) {
+            return
+        }
+
+        const values = booking_ticket.map(({ ticket_quantity, ticket_id }) => [booking_id, ticket_quantity, ticket_id]);
+        const placeholders = values.map(() => "(?,?,?)").join(",");
+
         try {
             await db.query(
-                `UPDATE booking_ticket SET
-                ticket_quantity = ?, ticket_id = ?
-                WHERE booking_id = ?`,
-                [ticket_quantity, ticket_id, booking_id],
+                `DELETE FROM booking_ticket WHERE booking_id = ?`,
+                [booking_id]
+            )
+            await db.query(
+                `INSERT INTO booking_ticket (booking_id, ticket_quantity, ticket_id) VALUES ${placeholders}`,
+                values.flat(),
             )
         }
         catch (error) {
@@ -222,6 +250,9 @@ export const bookingService = {
     },
 
     async updateBookingSeat(booking_id, booking_seat) {
+        if (!Array.isArray(booking_seat) || booking_seat.length === 0) {
+            return
+        }
         try {
             await db.query(
                 `DELETE FROM booking_seat WHERE booking_id = ?`,

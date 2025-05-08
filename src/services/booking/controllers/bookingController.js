@@ -23,6 +23,17 @@ const bookingController = {
         }
     },
 
+    async getBookingByAccountId(account_id) {
+        try {
+            const booking = await bookingService.getBookingByAccountId(account_id);
+            return booking;
+        }
+        catch (error) {
+            console.error('Error getting booking by account id in bookingService.getBookingByAccountId:', error);
+            throw error;
+        }
+    },
+
     async createBooking(bookingData) {
         try {
             const booking = await bookingService.createBooking(bookingData);

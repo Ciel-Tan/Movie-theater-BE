@@ -503,13 +503,16 @@
             "$ref": "#/components/schemas/ShowtimeDetail"
           },
           "booking_ticket": {
-            "type": "object",
-            "properties": {
-              "ticket_quantity": {
-                "type": "integer"
-              },
-              "ticket": {
-                "$ref": "#/components/schemas/Ticket"
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ticket_quantity": {
+                  "type": "integer"
+                },
+                "ticket": {
+                  "$ref": "#/components/schemas/Ticket"
+                }
               }
             }
           },
@@ -539,13 +542,16 @@
             "type": "integer"
           },
           "booking_ticket": {
-            "type": "object",
-            "properties": {
-              "ticket_quantity": {
-                "type": "integer"
-              },
-              "ticket_id": {
-                "type": "integer"
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ticket_quantity": {
+                  "type": "integer"
+                },
+                "ticket_id": {
+                  "type": "integer"
+                }
               }
             }
           },
@@ -2024,6 +2030,37 @@
                   "items": {
                     "$ref": "#/components/schemas/Booking"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/getByAccountId/{account_id}": {
+      "get": {
+        "tags": ["Booking Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
                 }
               }
             }
