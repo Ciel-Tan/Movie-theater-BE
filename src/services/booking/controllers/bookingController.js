@@ -34,6 +34,17 @@ const bookingController = {
         }
     },
 
+    async getBookingByMovieId(movie_id) {
+        try {
+            const booking = await bookingService.getBookingByMovieId(movie_id);
+            return booking;
+        }
+        catch (error) {
+            console.error('Error getting booking by movie id in bookingService.getBookingByMovieId:', error);
+            throw error;
+        }
+    },
+
     async createBooking(bookingData) {
         try {
             const booking = await bookingService.createBooking(bookingData);

@@ -10,6 +10,7 @@ import * as bookingService from './booking';
 import * as ticketService from './ticket';
 import * as seatTypeService from './seat_type';
 import * as cinemaService from './cinema';
+import * as seatService from './seat';
 
 export const services = {
     movieService,
@@ -22,6 +23,7 @@ export const services = {
     membershipService,
     bookingService,
     ticketService,
+    seatService,
     seatTypeService,
     cinemaService
 };

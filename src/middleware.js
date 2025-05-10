@@ -27,7 +27,12 @@ export async function middleware(request) {
     const allowedUserPermissionsRoutes = [
         {route: '/api/accounts/', methods: ['GET', 'PUT']},
         {route: '/api/accounts/change-password', methods: ['POST']},
-        {route: '/api/bookings/create', methods: ['POST']}
+        {route: '/api/bookings/create', methods: ['POST']},
+        {route: '/api/bookings/getByAccountId', methods: ['GET']},
+        {route: '/api/bookings/getByMovieId', methods: ['GET']},
+        {route: '/api/seats/getAll', methods: ['GET']},
+        {route: '/api/seat_types/getAll', methods: ['GET']},
+        {route: '/api/tickets/getAll', methods: ['GET']}
     ];
 
     const publicRoutes = [

@@ -1,22 +1,22 @@
 import db from "../../../../db";
 
 export const bookingService = {
-    async getBookingQuery(booking_id = null, account_id = null) {
+    async getBookingQuery(booking_id = null, account_id = null, movie_id = null) {
         try {
             let whereClause = '';
             const queryParams = [];
 
-            if (booking_id !== null && account_id !== null) {
-                whereClause = 'WHERE b.booking_id = ? AND b.account_id = ?';
-                queryParams.push(booking_id, account_id);
-            }
-            else if (booking_id !== null) {
+            if (booking_id !== null) {
                 whereClause = 'WHERE b.booking_id = ?';
                 queryParams.push(booking_id);
             }
             else if (account_id !== null) {
                 whereClause = 'WHERE b.account_id = ?';
                 queryParams.push(account_id);
+            }
+            else if (movie_id !== null) {
+                whereClause = 'WHERE m.movie_id = ?';
+                queryParams.push(movie_id);
             }
 
             const bookings = await db.query(
@@ -61,6 +61,14 @@ export const bookingService = {
                                 'director_id', d.director_id,
                                 'director_name', d.director_name
                             )
+                        ),
+                        'cinema', JSON_OBJECT(
+                            'cinema_id', c.cinema_id,
+                            'cinema_name', c.cinema_name,
+                            'address', JSON_OBJECT(
+                                'address_id', a.address_id,
+                                'address_name', a.address_name
+                            )  
                         ),
                         'room', JSON_OBJECT(
                             'room_id', rm.room_id,
@@ -108,6 +116,8 @@ export const bookingService = {
                 LEFT JOIN membership_type mt ON acc.membership_id = mt.membership_id
                 LEFT JOIN showtime st ON b.showtime_id = st.showtime_id
                 LEFT JOIN movie m ON st.movie_id = m.movie_id
+                LEFT JOIN cinema c ON st.cinema_id = c.cinema_id
+                LEFT JOIN address a ON c.address_id = a.address_id
                 LEFT JOIN director d ON m.director_id = d.director_id
                 LEFT JOIN room rm ON st.room_id = rm.room_id
                 ${whereClause}
@@ -128,12 +138,17 @@ export const bookingService = {
     },
 
     async getBookingById(booking_id) {
-        const bookings = await this.getBookingQuery(booking_id, null)
+        const bookings = await this.getBookingQuery(booking_id, null, null)
         return bookings[0];
     },
 
     async getBookingByAccountId(account_id) {
-        const bookings = await this.getBookingQuery(null, account_id)
+        const bookings = await this.getBookingQuery(null, account_id, null)
+        return bookings;
+    },
+
+    async getBookingByMovieId(movie_id) {
+        const bookings = await this.getBookingQuery(null, null, movie_id)
         return bookings;
     },
 
