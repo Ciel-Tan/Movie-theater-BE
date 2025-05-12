@@ -153,12 +153,12 @@ export const bookingService = {
     },
 
     async createBookingTable(bookingData) {
-        const { showtime_id, account_id, booking_datetime, booking_fee } = bookingData;
+        const { showtime, account, booking_datetime, booking_fee } = bookingData;
         try {
             const booking = await db.query(
                 `INSERT INTO booking SET
                  showtime_id = ?, account_id = ?, booking_datetime = ?, booking_fee = ?`,
-                [showtime_id, account_id, booking_datetime.slice(0, 19).replace('T', ' '), booking_fee],
+                [showtime.showtime_id, account.account_id, booking_datetime.slice(0, 19).replace('T', ' '), booking_fee],
             );
 
             return booking.insertId
@@ -175,10 +175,10 @@ export const bookingService = {
         }
 
         const placeholders = booking_ticket.map(() => '(?, ?, ?)').join(', ');
-        const values = booking_ticket.reduce((arr, { ticket_id, ticket_quantity }) => {
-            arr.push(booking_id, ticket_id, ticket_quantity);
-            return arr;
-        }, []);
+        const values = booking_ticket.reduce((acc, { ticket_quantity, ticket }) => {
+            acc.push(booking_id, ticket.ticket_id, ticket_quantity);
+            return acc;
+          }, []);
 
         try {
             await db.query(
@@ -212,7 +212,7 @@ export const bookingService = {
     async createBooking(bookingData) {
         const { booking_ticket, booking_seat, ...rest } = bookingData;
         try {
-            const booking_id =await this.createBookingTable(rest);
+            const booking_id = await this.createBookingTable(rest);
             await this.createBookingTicket(booking_id, booking_ticket);
             await this.createBookingSeat(booking_id, booking_seat);
             

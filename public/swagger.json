@@ -535,11 +535,21 @@
             "type": "number",
             "format": "float"
           },
-          "account_id": {
-            "type": "integer"
+          "account": {
+            "type": "object",
+            "properties": {
+              "account_id": {
+                "type": "integer"
+              }
+            }
           },
-          "showtime_id": {
-            "type": "integer"
+          "showtime": {
+            "type": "object",
+            "properties": {
+              "showtime_id": {
+                "type": "integer"
+              }
+            }
           },
           "booking_ticket": {
             "type": "array",
@@ -2389,7 +2399,7 @@
         }
       }
     },
-    "/api/seats/getAll": {
+    "/api/public/seats/getAll": {
       "get": {
         "tags": ["Seat Controller"],
         "security": [
