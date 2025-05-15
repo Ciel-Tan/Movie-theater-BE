@@ -90,12 +90,12 @@ export const showtimeService = {
         }
     },
 
-    async createShowtimeTable(movie_id, room_id, show_datetime) {
+    async createShowtimeTable(movie_id, cinema_id, room_id, show_datetime) {
         try {
             const showtime = await db.query(
                 `INSERT INTO showtime SET
-                 movie_id = ?, room_id = ?, show_datetime = ?`,
-                [movie_id, room_id, show_datetime.slice(0, 19).replace('T', ' ')],
+                 movie_id = ?, cinema_id = ?, room_id = ?, show_datetime = ?`,
+                [movie_id, cinema_id, room_id, show_datetime.slice(0, 19).replace('T', ' ')],
             );
             
             return showtime.insertId
@@ -107,10 +107,10 @@ export const showtimeService = {
     },
 
     async createShowtime(showtimeData) {
-        const { movie, room, show_datetime } = showtimeData;
+        const { movie, cinema, room, show_datetime } = showtimeData;
 
         const movie_id = await this.createMovieShowtime(movie)
-        const showtime_id = await this.createShowtimeTable(movie_id, room.room_id, show_datetime)
+        const showtime_id = await this.createShowtimeTable(movie_id, cinema.cinema_id, room.room_id, show_datetime)
 
         return await this.getShowtimeById(showtime_id)
     },

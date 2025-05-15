@@ -121,8 +121,21 @@
           "movie_id": {
             "type": "integer"
           },
-          "room_id": {
-            "type": "integer"
+          "cinema": {
+            "type": "object",
+            "properties": {
+              "cinema_id": {
+                "type": "integer"
+              }
+            }
+          },
+          "room": {
+            "type": "object",
+            "properties": {
+              "room_id": {
+                "type": "integer"
+              }
+            }
           },
           "show_datetime": {
             "type": "string",
