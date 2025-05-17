@@ -78,7 +78,7 @@ export const accountService = {
                     acc.account_id,
                     acc.full_name,
                     acc.gender,
-                    acc.birthday,
+                    DATE_FORMAT(acc.birthday, '%Y-%m-%d') AS birthday,
                     acc.id_number,
                     acc.phone_number,
                     acc.email,
@@ -115,8 +115,20 @@ export const accountService = {
     },
 
     async updateAccount(account_id, accountData) {
-        const accounts = await this.getAccountQuery(account_id)
-        return accounts[0]
+        try {
+            const { membership_type, full_name, gender, birthday, id_number, phone_number, email } = accountData;
+            await db.query(
+                `UPDATE account
+                 SET membership_id = ?, full_name = ?, gender = ?, birthday = ?, id_number = ?, phone_number = ?, email = ?
+                 WHERE account_id = ?`,
+                [membership_type.membership_id, full_name, gender, birthday, id_number, phone_number, email, account_id]
+            )
+            return this.getAccountById(account_id)
+        }
+        catch (error) {
+            console.error("Error updating account:", error);
+            throw error;
+        }
     },
 
     async deleteAccount(account_id) {
