@@ -105,6 +105,9 @@
           "movie": {
             "$ref": "#/components/schemas/Movie"
           },
+          "cinema": {
+            "$ref": "#/components/schemas/Cinema"
+          },
           "room": {
             "$ref": "#/components/schemas/Room"
           },
