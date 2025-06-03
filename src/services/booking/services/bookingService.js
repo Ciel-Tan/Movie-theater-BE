@@ -24,6 +24,7 @@ export const bookingService = {
                     b.booking_id,
                     b.booking_datetime AS booking_datetime,
                     b.booking_fee,
+                    b.total_price,
 
                     JSON_OBJECT(
                         'account_id', acc.account_id,
@@ -153,12 +154,12 @@ export const bookingService = {
     },
 
     async createBookingTable(bookingData) {
-        const { showtime, account, booking_datetime, booking_fee } = bookingData;
+        const { showtime, account, booking_datetime, booking_fee, total_price } = bookingData;
         try {
             const booking = await db.query(
                 `INSERT INTO booking SET
-                 showtime_id = ?, account_id = ?, booking_datetime = ?, booking_fee = ?`,
-                [showtime.showtime_id, account.account_id, booking_datetime.slice(0, 19).replace('T', ' '), booking_fee],
+                 showtime_id = ?, account_id = ?, booking_datetime = ?, booking_fee = ?, total_price = ?`,
+                [showtime.showtime_id, account.account_id, booking_datetime.slice(0, 19).replace('T', ' '), booking_fee, total_price],
             );
 
             return booking.insertId
@@ -229,8 +230,8 @@ export const bookingService = {
         try {
             await db.query(
                 `UPDATE booking SET
-                showtime_id = ?, account_id = ?, booking_datetime = ?, booking_fee = ?
-                WHERE booking_id = ?`,
+                 showtime_id = ?, account_id = ?, booking_datetime = ?, booking_fee = ?
+                 WHERE booking_id = ?`,
                 [showtime_id, account_id, booking_datetime.slice(0, 19).replace('T', ' '), booking_fee, booking_id],
             );
         }
