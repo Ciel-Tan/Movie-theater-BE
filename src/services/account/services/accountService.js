@@ -94,6 +94,7 @@ export const accountService = {
                  FROM account acc
                  JOIN role r ON acc.role_id = r.role_id
                  JOIN membership_type mt ON acc.membership_id = mt.membership_id
+                 ORDER BY acc.account_id ASC
                  ${whereClause}`, queryParams
             )
 
@@ -133,6 +134,7 @@ export const accountService = {
 
     async deleteAccount(account_id) {
         try {
+            await db.query(`UPDATE booking SET account_id = NULL WHERE account_id = ?`, [account_id])
             const result = await db.query(`DELETE FROM account WHERE account_id = ?`, [account_id])
             return result.affectedRows
         }

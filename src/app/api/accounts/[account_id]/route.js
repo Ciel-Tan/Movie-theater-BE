@@ -59,7 +59,7 @@ export async function PUT(request, {params}) {
 export async function DELETE(request, {params}) {
     try {
         const awaitedParams = await Promise.resolve(params)
-        const account_id = parseInt(awaitedParams.accountRoute, 10)
+        const account_id = parseInt(awaitedParams.account_id, 10)
 
         if (isNaN(account_id)) {
             return NextResponse.json({ message: "Invalid account id" }, { status: 400 })
