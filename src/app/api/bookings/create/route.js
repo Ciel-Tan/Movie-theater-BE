@@ -5,13 +5,12 @@ export async function POST(request, { params }) {
     try {
         const bookingData = await request.json();
 
-        const { showtime, account, booking_datetime, booking_fee, booking_ticket, booking_seat } = bookingData;
+        const { showtime, account, booking_datetime, total_price, booking_ticket, booking_seat } = bookingData;
 
         const showtimeId = parseInt(showtime.showtime_id, 10);
         const accountId = parseInt(account.account_id, 10);
-        const bookingFee = parseFloat(booking_fee);
 
-        if (isNaN(showtimeId) || isNaN(accountId) || isNaN(bookingFee)) {
+        if (isNaN(showtimeId) || isNaN(accountId)) {
             return NextResponse.json({ message: "Invalid data type" }, { status: 400 })
         }
 
@@ -19,7 +18,7 @@ export async function POST(request, { params }) {
             !showtime.showtime_id || 
             !account.account_id || 
             !booking_datetime || 
-            !booking_fee || 
+            !total_price || 
             !booking_ticket || 
             !booking_seat
         ) {

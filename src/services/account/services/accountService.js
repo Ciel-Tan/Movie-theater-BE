@@ -94,8 +94,8 @@ export const accountService = {
                  FROM account acc
                  JOIN role r ON acc.role_id = r.role_id
                  JOIN membership_type mt ON acc.membership_id = mt.membership_id
-                 ORDER BY acc.account_id ASC
-                 ${whereClause}`, queryParams
+                 ${whereClause}
+                 ORDER BY acc.account_id ASC`, queryParams
             )
 
             return accounts
