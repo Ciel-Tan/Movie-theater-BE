@@ -121,8 +121,13 @@
       "ShowtimeRequestBody": {
         "type": "object",
         "properties": {
-          "movie_id": {
-            "type": "integer"
+          "movie": {
+            "type": "object",
+            "properties": {
+              "movie_id": {
+                "type": "integer"
+              }
+            }
           },
           "cinema": {
             "type": "object",

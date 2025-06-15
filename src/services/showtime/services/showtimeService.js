@@ -69,25 +69,16 @@ export const showtimeService = {
         return showtime[0]
     },
 
-    async createMovieShowtime(movieData) {
-        const { title } = movieData;
-        try {
-            const existingMovie = await db.query(
-                `SELECT movie_id FROM movie WHERE title = ?`,
-                [title],
-            );
+    async createShowtime(showtimeData) {
+        const { movie, cinema, room, show_datetime } = showtimeData;
 
-            if (existingMovie.length > 0) {
-                return existingMovie[0].movie_id
-            }
+        const movie_id = movie?.movie_id;
+        const cinema_id = cinema?.cinema_id;
+        const room_id = room?.room_id;
 
-            const movie = await db.query(`INSERT INTO movie SET title = ?`, [title]);
-            return movie.insertId
-        }
-        catch (error) {
-            console.error('Error creating movie from database:', error);
-            throw error;
-        }
+        const showtime_id = await this.createShowtimeTable(movie_id, cinema_id, room_id, show_datetime)
+
+        return await this.getShowtimeById(showtime_id)
     },
 
     async createShowtimeTable(movie_id, cinema_id, room_id, show_datetime) {
@@ -104,15 +95,6 @@ export const showtimeService = {
             console.error('Error creating showtime from database:', error);
             throw error;
         }
-    },
-
-    async createShowtime(showtimeData) {
-        const { movie, cinema, room, show_datetime } = showtimeData;
-
-        const movie_id = await this.createMovieShowtime(movie)
-        const showtime_id = await this.createShowtimeTable(movie_id, cinema.cinema_id, room.room_id, show_datetime)
-
-        return await this.getShowtimeById(showtime_id)
     },
 
     async updateMovie(movieData) {
@@ -165,9 +147,8 @@ export const showtimeService = {
     },
 
     async updateShowtime(showtime_id, showtimeData) {
-        const { movie, room, show_datetime } = showtimeData;
+        const { room, show_datetime } = showtimeData;
 
-        await this.updateMovie(movie);
         await this.updateRoom(showtime_id, room);
         await this.updateShowtimeTable(showtime_id, show_datetime);
 
