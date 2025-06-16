@@ -556,6 +556,10 @@
             "type": "number",
             "format": "float"
           },
+          "total_price": {
+            "type": "number",
+            "format": "float"
+          },
           "account": {
             "type": "object",
             "properties": {
