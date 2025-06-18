@@ -10,6 +10,7 @@
     "generate-swagger": "node ./scripts/generate-swagger.js"
   },
   "dependencies": {
+    "@payos/node": "^1.0.10",
     "backend": "file:",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",

@@ -38,7 +38,8 @@ export async function middleware(request) {
         '/api/public',
         '/api/auth',
         '/api/accounts/forgot-password',
-        '/api/bookings/getByMovieId'
+        '/api/bookings/getByMovieId',
+        '/api/payments/create'
     ];
 
     if (publicRoutes.includes(path) || publicRoutes.some(route => path.startsWith(route))) {
