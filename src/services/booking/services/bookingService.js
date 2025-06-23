@@ -42,6 +42,10 @@ export const bookingService = {
                             'membership_id', mt.membership_id,
                             'membership_name', mt.membership_name,
                             'discount_rate', mt.discount_rate
+                        ),
+                        'residence', JSON_OBJECT(
+                            'residence_id', res.residence_id,
+                            'residence_name', res.residence_name
                         )
                     ) AS account,
 
@@ -114,6 +118,7 @@ export const bookingService = {
                 FROM booking b
                 LEFT JOIN account acc ON b.account_id = acc.account_id
                 LEFT JOIN role r ON acc.role_id = r.role_id
+                LEFT JOIN residence res ON acc.residence_id = res.residence_id
                 LEFT JOIN membership_type mt ON acc.membership_id = mt.membership_id
                 LEFT JOIN showtime st ON b.showtime_id = st.showtime_id
                 LEFT JOIN movie m ON st.movie_id = m.movie_id

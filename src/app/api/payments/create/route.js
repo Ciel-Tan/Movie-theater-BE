@@ -23,7 +23,8 @@ export async function POST(req) {
     const paymentLink = await payos.createPaymentLink(paymentData);
 
     return NextResponse.json({ checkoutUrl: paymentLink.checkoutUrl });
-  }catch (error) {
+  }
+  catch (error) {
     console.error("Error creating payment link:", error);
     return NextResponse.json({ error: `Failed to create payment link: ${error.message}` }, { status: 500 });
   }

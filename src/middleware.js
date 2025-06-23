@@ -31,7 +31,9 @@ export async function middleware(request) {
         {route: '/api/seats/getAll', methods: ['GET']},
         {route: '/api/seat_types/getAll', methods: ['GET']},
         {route: '/api/tickets/getAll', methods: ['GET']},
-        {route: '/api/showtimes/', methods: ['GET']}
+        {route: '/api/showtimes/', methods: ['GET']},
+        {route: '/api/residences/getAll', methods: ['GET']},
+        {route: '/api/residences/set-residence', methods: ['POST']}
     ];
 
     const publicRoutes = [
@@ -39,7 +41,8 @@ export async function middleware(request) {
         '/api/auth',
         '/api/accounts/forgot-password',
         '/api/bookings/getByMovieId',
-        '/api/payments/create'
+        '/api/payments/create',
+        '/api/payments/verify'
     ];
 
     if (publicRoutes.includes(path) || publicRoutes.some(route => path.startsWith(route))) {

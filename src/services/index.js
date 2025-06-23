@@ -12,6 +12,7 @@ import * as seatTypeService from './seat_type';
 import * as cinemaService from './cinema';
 import * as seatService from './seat';
 import * as roleService from './role';
+import * as residenceService from './residence';
 
 export const services = {
     movieService,
@@ -27,5 +28,6 @@ export const services = {
     seatService,
     seatTypeService,
     cinemaService,
-    roleService
+    roleService,
+    residenceService
 };

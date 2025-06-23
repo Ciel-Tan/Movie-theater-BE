@@ -642,6 +642,20 @@
             "type": "string"
           }
         }
+      },
+      "Residence": {
+        "type": "object",
+        "properties": {
+          "residence_id": { "type": "integer" },
+          "residence_name": { "type": "string" }
+        }
+      },
+      "SetResidenceRequestBody": {
+        "type": "object",
+        "properties": {
+          "account_id": { "type": "integer" },
+          "residence_id": { "type": "integer" }
+        }
       }
     }
   },
@@ -2748,6 +2762,64 @@
                   "items": {
                     "$ref": "#/components/schemas/Role"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/residences/getAll": {
+      "get": {
+        "tags": ["Residence Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Residence"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/residences/set-residence": {
+      "post": {
+        "tags": ["Residence Controller"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetResidenceRequestBody"
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "string", "example": "Residence set successfully" }
                 }
               }
             }

@@ -23,7 +23,8 @@ export async function GET(req) {
       status: paymentInfo.status,
       ...paymentInfo
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Error verifying payment:", error);
     return NextResponse.json({ error: "Failed to verify payment" }, { status: 500 });
   }

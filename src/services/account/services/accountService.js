@@ -86,6 +86,10 @@ export const accountService = {
                         'role_id', r.role_id,
                         'role_name', r.role_name
                     ) AS role,
+                    JSON_OBJECT(
+                        'residence_id', res.residence_id,
+                        'residence_name', res.residence_name
+                    ) AS residence,
                     'membership_type', JSON_OBJECT(
                         'membership_id', mt.membership_id,
                         'membership_name', mt.membership_name,
@@ -94,6 +98,7 @@ export const accountService = {
                  FROM account acc
                  JOIN role r ON acc.role_id = r.role_id
                  JOIN membership_type mt ON acc.membership_id = mt.membership_id
+                 JOIN residence res ON acc.residence_id = res.residence_id
                  ${whereClause}
                  ORDER BY acc.account_id ASC`, queryParams
             )
