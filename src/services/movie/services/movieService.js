@@ -63,12 +63,13 @@ export const movieService = {
                                 'room_name', r_sub.room_name
                             ),
                             'show_datetime', st_sub.show_datetime
-                        ) AS showtime_json
+                        ) AS showtime_json, st_sub.show_datetime
                         FROM showtime st_sub
                         JOIN room r_sub ON st_sub.room_id = r_sub.room_id
                         JOIN cinema c_sub ON st_sub.cinema_id = c_sub.cinema_id
                         JOIN address ad_sub ON c_sub.address_id = ad_sub.address_id
                         WHERE st_sub.movie_id = m.movie_id
+                        ORDER BY st_sub.show_datetime ASC
                     ) AS distinct_showtime
                     ) AS showtime
 
