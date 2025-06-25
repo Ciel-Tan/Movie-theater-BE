@@ -139,9 +139,6 @@ export const movieService = {
     },
 
     async getMovieComingSoon() {
-        const thirtyDaysLater = new Date()
-        thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30)
-        
         try {
             const movies = await db.query(
                 `SELECT m.movie_id, m.title, m.poster_image, m.poster_url, m.description,
@@ -166,9 +163,8 @@ export const movieService = {
                 
                  FROM movie m
                  LEFT JOIN director d ON m.director_id = d.director_id
-                 WHERE m.release_date > CURRENT_DATE() AND m.release_date <= ?
-                 ORDER BY m.release_date ASC`,
-                 [thirtyDaysLater]
+                 WHERE m.release_date > CURRENT_DATE()
+                 ORDER BY m.release_date ASC`
             )
             return movies
         }
